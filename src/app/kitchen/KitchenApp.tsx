@@ -74,6 +74,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [show, setShow] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -96,7 +97,11 @@ function LoginForm() {
         </label>
         <label className="flex flex-col gap-1 font-bold">
           Password
-          <input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl border border-club-line bg-white px-3 py-3 font-normal" />
+          <input type={show ? "text" : "password"} autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl border border-club-line bg-white px-3 py-3 font-normal" />
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} className="h-5 w-5 accent-club-green" />
+          Show password
         </label>
         {error && (
           <p role="alert" className="text-sm font-bold text-red-700">
