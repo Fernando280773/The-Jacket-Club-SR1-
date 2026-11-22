@@ -25,7 +25,8 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
       p_amount_pence: session.amount_total ?? 0,
       p_name: m.name ?? "",
       p_phone: m.phone ?? "",
-      p_email: m.email ?? "",
+      // Our form's email first; otherwise the one typed on Stripe's payment page.
+      p_email: m.email || session.customer_details?.email || "",
       p_pickup_at: m.pickup_at || null,
     });
     if (error) return { ok: false, reason: "error", message: error.message };
