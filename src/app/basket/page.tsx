@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BasketProvider } from "@/components/BasketProvider";
 import { getMenu } from "@/lib/menu";
-import { isBeforeOpeningDay } from "@/lib/opening";
+import { orderingOpen } from "@/lib/server/ordering";
 import { BasketView } from "./BasketView";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Your basket · The Jacket Club SR1" };
 
 export default async function BasketPage() {
@@ -22,7 +22,7 @@ export default async function BasketPage() {
           </Link>
           <h1 className="font-display text-2xl text-club-green">Your basket</h1>
         </header>
-        <BasketView isBeforeOpening={isBeforeOpeningDay(new Date())} />
+        <BasketView canOrder={orderingOpen(new Date())} />
       </main>
     </BasketProvider>
   );
