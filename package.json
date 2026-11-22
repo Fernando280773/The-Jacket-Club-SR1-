@@ -17,7 +17,8 @@
     "@supabase/supabase-js": "2.49.4",
     "next": "15.5.29",
     "react": "19.1.10",
-    "react-dom": "19.1.10"
+    "react-dom": "19.1.10",
+    "stripe": "17.7.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

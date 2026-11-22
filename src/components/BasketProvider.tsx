@@ -13,7 +13,8 @@ export const ORDER_TYPES: { key: OrderType; label: string }[] = [
   { key: "delivery", label: "Delivery" },
 ];
 
-type BasketState = { lines: BasketLine[]; orderType: OrderType };
+export type TableRef = { token: string; number: number };
+type BasketState = { lines: BasketLine[]; orderType: OrderType; table?: TableRef };
 
 type BasketContextValue = BasketState & {
   ready: boolean;
@@ -40,10 +41,31 @@ function load(): BasketState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as BasketState;
     if (!Array.isArray(parsed.lines)) return null;
-    return { lines: parsed.lines, orderType: ORDER_TYPES.some((t) => t.key === parsed.orderType) ? parsed.orderType : "collect" };
+    const table = parsed.table && typeof parsed.table.token === "string" && typeof parsed.table.number === "number" ? parsed.table : undefined;
+    return { lines: parsed.lines, orderType: ORDER_TYPES.some((t) => t.key === parsed.orderType) ? parsed.orderType : "collect", table };
   } catch {
     return null;
   }
+}
+
+function store(state: BasketState) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Private mode or storage full: the basket still works until the page is closed.
+  }
+}
+
+/** Called by a table's QR link: remember the table and switch to ordering at the table. */
+export function saveTable(table: TableRef) {
+  const current = load() ?? { lines: [], orderType: "collect" as OrderType };
+  store({ ...current, orderType: "table", table });
+}
+
+/** Called after a successful payment: empty the basket but keep the order type and table. */
+export function clearSavedBasket() {
+  const current = load();
+  if (current) store({ ...current, lines: [] });
 }
 
 /** Holds the basket on this phone (item codes, choices and quantities only; prices always come from the menu). */
@@ -60,12 +82,7 @@ export function BasketProvider({ menu, children }: { menu: Pick<Menu, "categorie
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // Private mode or storage full: the basket still works until the page is closed.
-    }
+    if (ready) store(state);
   }, [state, ready]);
 
   const addLine = useCallback((itemCode: string, choices: Choices, quantity: number) => {

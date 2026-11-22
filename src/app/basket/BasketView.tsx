@@ -11,12 +11,12 @@ import { priceBasketOnServer } from "./actions";
 
 const NOTES: Record<string, string> = {
   collect: "Collect from 12–14 Park Lane. You'll choose a time at checkout.",
-  table: "Eating in? Scan the QR code on your table and your order comes to you.",
+  table: "Eating in? Scan the QR code on your table and we'll bring your order to you.",
   book: "Booking a table comes in a later step. Choose Collect, Table or Delivery to order food.",
   delivery: "Our own drivers deliver up to 4 miles. The delivery fee is added at checkout.",
 };
 
-export function BasketView({ isBeforeOpening }: { isBeforeOpening: boolean }) {
+export function BasketView({ canOrder }: { canOrder: boolean }) {
   const basket = useBasket();
   const [priced, setPriced] = useState<PricedBasket | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +63,8 @@ export function BasketView({ isBeforeOpening }: { isBeforeOpening: boolean }) {
       <section aria-label="Order type" className="flex flex-col gap-2">
         <OrderTypes />
         <p data-testid="order-type-note" className="text-sm text-club-muted">
-          <span className="font-bold text-club-ink">{typeLabel}:</span> {NOTES[basket.orderType]}
+          <span className="font-bold text-club-ink">{typeLabel}:</span>{" "}
+          {basket.orderType === "table" && basket.table ? `Table ${basket.table.number}. We'll bring your order to you.` : NOTES[basket.orderType]}
         </p>
       </section>
 
@@ -123,9 +124,24 @@ export function BasketView({ isBeforeOpening }: { isBeforeOpening: boolean }) {
         </p>
       )}
 
-      <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
-        {isBeforeOpening ? "Ordering opens 10 December" : "Checkout coming soon"}
-      </button>
+      {!canOrder ? (
+        <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
+          Ordering opens 10 December
+        </button>
+      ) : basket.orderType === "delivery" || basket.orderType === "book" ? (
+        <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
+          {basket.orderType === "delivery" ? "Delivery coming soon" : "Table booking coming soon"}
+        </button>
+      ) : (
+        <Link
+          href="/checkout"
+          data-testid="go-to-checkout"
+          aria-disabled={!priced?.isValid}
+          className={`rounded-2xl px-5 py-4 text-center font-bold text-club-paper ${priced?.isValid ? "bg-club-green" : "pointer-events-none bg-club-green/40"}`}
+        >
+          Go to checkout{priced ? ` · ${formatPence(subtotal)}` : ""}
+        </Link>
+      )}
       <Link href="/" className="text-center font-bold text-club-green underline">
         Add more items
       </Link>
