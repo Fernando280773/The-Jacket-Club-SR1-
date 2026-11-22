@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Checkout · The Jacket Club SR1" };
 
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ cancelled?: string }> }) {
   const { cancelled } = await searchParams;
-  const result = await getMenu();
+  const result = await getMenu({ fresh: true });
   if (!result.ok) throw new Error(result.error);
   const now = new Date();
 
@@ -29,7 +29,11 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
             Payment cancelled. You haven&apos;t been charged, and your basket is still here.
           </p>
         )}
-        {orderingOpen(now) ? (
+        {!result.menu.acceptingOrders ? (
+          <p data-testid="ordering-paused" className="py-8 text-center font-bold">
+            We&apos;re not taking online orders right now.{result.menu.pausedMessage ? ` ${result.menu.pausedMessage}` : ""}
+          </p>
+        ) : orderingOpen(now) ? (
           <CheckoutForm slots={pickupSlots(result.menu.hours, now)} />
         ) : (
           <p className="py-8 text-center font-bold">Ordering opens 10 December.</p>

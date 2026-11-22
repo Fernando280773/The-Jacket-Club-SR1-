@@ -12,6 +12,7 @@ import { isBeforeOpeningDay } from "@/lib/opening";
 
 // The menu is rebuilt at most every 60 seconds, so price changes show within a minute.
 // Open/closed is worked out live in the browser (OpenStatus).
+// Admin changes also refresh it straight away (see /api/admin/refresh).
 export const revalidate = 60;
 
 export default async function MenuPage() {
@@ -37,6 +38,11 @@ export default async function MenuPage() {
       {isBeforeOpeningDay(new Date()) && (
         <p data-testid="opening-banner" className="-mx-4 bg-club-butter px-4 py-2 text-center text-sm font-bold text-club-ink">
           Ordering opens 10 December
+        </p>
+      )}
+      {!menu.acceptingOrders && (
+        <p data-testid="paused-banner" className="-mx-4 bg-club-ink px-4 py-2 text-center text-sm font-bold text-club-paper">
+          Not taking online orders right now{menu.pausedMessage ? ` · ${menu.pausedMessage}` : ""}
         </p>
       )}
 

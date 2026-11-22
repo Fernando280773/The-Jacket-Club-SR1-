@@ -4,7 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 test("the kitchen asks for a staff login first", async ({ page }) => {
   await page.goto("/kitchen");
-  await expect(page.getByTestId("kitchen-login")).toBeVisible();
+  await expect(page.getByTestId("staff-login")).toBeVisible();
   await expect(page.getByTestId("kitchen-order")).toHaveCount(0);
 });
 

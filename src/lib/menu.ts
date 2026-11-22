@@ -49,6 +49,10 @@ export type Menu = {
   groups: Record<string, OptionGroup>;
   /** Smallest delivery order before the delivery fee, in pence. */
   deliveryMinPence: number;
+  /** False when the owner has paused online ordering in admin. */
+  acceptingOrders: boolean;
+  /** Shown to customers while ordering is paused, e.g. "Back at 2pm". */
+  pausedMessage: string | null;
 };
 
 export type MenuResult = { ok: true; menu: Menu } | { ok: false; error: string };
@@ -95,15 +99,15 @@ type GroupRow = {
 };
 
 const settingsOf = (s: unknown) =>
-  (Array.isArray(s) ? s[0] : s) as { delivery_min_order_pence: number } | undefined;
+  (Array.isArray(s) ? s[0] : s) as { delivery_min_order_pence: number; is_accepting_orders: boolean; paused_message: string | null } | undefined;
 
-/** Reads the whole menu for the shop from Supabase in four queries. */
-export async function getMenu(): Promise<MenuResult> {
+/** Reads the whole menu for the shop from Supabase in four queries. `fresh` skips any cached copy (basket and checkout). */
+export async function getMenu(opts: { fresh?: boolean } = {}): Promise<MenuResult> {
   try {
-    const db = publicClient();
+    const db = publicClient(opts);
     const { data: shop, error: shopError } = await db
       .from("shops")
-      .select("id, name, address, postcode, opening_hours(iso_day, opens, closes), shop_settings(delivery_min_order_pence)")
+      .select("id, name, address, postcode, opening_hours(iso_day, opens, closes), shop_settings(delivery_min_order_pence, is_accepting_orders, paused_message)")
       .eq("slug", SHOP_SLUG)
       .single();
     if (shopError || !shop) return { ok: false, error: shopError?.message ?? "Shop not found" };
@@ -182,6 +186,8 @@ export async function getMenu(): Promise<MenuResult> {
         allergens: allergens.data ?? [],
         groups,
         deliveryMinPence: settingsOf(shop.shop_settings)?.delivery_min_order_pence ?? 1200,
+        acceptingOrders: settingsOf(shop.shop_settings)?.is_accepting_orders ?? true,
+        pausedMessage: settingsOf(shop.shop_settings)?.paused_message ?? null,
       },
     };
   } catch (e) {

@@ -16,7 +16,7 @@ const NOTES: Record<string, string> = {
   delivery: "Our own drivers deliver up to 4 miles. The delivery fee is added at checkout.",
 };
 
-export function BasketView({ canOrder }: { canOrder: boolean }) {
+export function BasketView({ canOrder, paused = false, pausedMessage = null }: { canOrder: boolean; paused?: boolean; pausedMessage?: string | null }) {
   const basket = useBasket();
   const [priced, setPriced] = useState<PricedBasket | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -125,8 +125,8 @@ export function BasketView({ canOrder }: { canOrder: boolean }) {
       )}
 
       {!canOrder ? (
-        <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
-          Ordering opens 10 December
+        <button type="button" disabled data-testid="ordering-closed" className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
+          {paused ? (pausedMessage ? `Not taking orders right now · ${pausedMessage}` : "Not taking orders right now") : "Ordering opens 10 December"}
         </button>
       ) : basket.orderType === "delivery" || basket.orderType === "book" ? (
         <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">

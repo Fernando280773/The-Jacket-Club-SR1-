@@ -1,8 +1,25 @@
+import Image from "next/image";
 import { formatPence } from "@/lib/money";
 import type { MenuItem } from "@/lib/menu";
 import { OpenItemButton } from "./OpenItemButton";
 
-/** Photo placeholder until real food photos arrive after opening. */
+/** The item's photo, or its initials until a photo is added in admin. */
+function ItemPhoto({ name, url, size }: { name: string; url: string | null; size: "sm" | "lg" }) {
+  if (url) {
+    return (
+      <Image
+        src={url}
+        alt=""
+        width={size === "lg" ? 320 : 160}
+        height={size === "lg" ? 224 : 160}
+        sizes={size === "lg" ? "160px" : "80px"}
+        className={`shrink-0 rounded-xl bg-club-cream object-cover ${size === "lg" ? "h-28 w-full" : "h-20 w-20"}`}
+      />
+    );
+  }
+  return <PhotoPlaceholder name={name} size={size} />;
+}
+
 function PhotoPlaceholder({ name, size }: { name: string; size: "sm" | "lg" }) {
   const initials = name
     .split(/\s+/)
@@ -58,7 +75,7 @@ export function ItemCard({ item }: { item: MenuItem }) {
           </p>
         )}
       </div>
-      <PhotoPlaceholder name={item.name} size="sm" />
+      <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
     </article>
   );
 }
@@ -71,7 +88,7 @@ export function FavouriteCard({ item }: { item: MenuItem }) {
       className={`relative flex w-40 shrink-0 snap-start flex-col gap-2 ${item.isAvailable ? "" : "opacity-50 grayscale"}`}
     >
       {item.isAvailable && <OpenItemButton code={item.code} name={item.name} />}
-      <PhotoPlaceholder name={item.name} size="lg" />
+      <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
       <h3 className="text-sm font-bold leading-snug">{item.name}</h3>
       <div className="flex items-center gap-2">
         <span className="text-sm font-bold text-club-green">{formatPence(item.pricePence)}</span>

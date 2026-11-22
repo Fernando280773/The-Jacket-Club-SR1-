@@ -1,4 +1,9 @@
 // Turns data/menu.json (a snapshot of the Menu Sheet) into a menu sync migration.
+//
+// SINCE STEP 10 THE DATABASE IS THE MASTER for prices, names, descriptions, photos, sold out and favourites
+// (the owner edits them in /admin). Don't re-run a full sync over the live menu: it would undo those edits.
+// New items, options and allergen changes go in a hand-written migration instead.
+//
 // Every statement inserts new rows and updates existing ones, so it can be re-run after each sheet change.
 // When the sheet changes: update data/menu.json, set MIGRATION_PATH to a new timestamped file, run
 //   node scripts/build-menu-migration.mjs

@@ -5,7 +5,7 @@ import { parseLines, priceBasket, pricingMenuFrom, type PricedBasket } from "@/l
 
 /** The basket priced by the server from the live menu. Only item codes, option ids and quantities are trusted. */
 export async function priceBasketOnServer(input: unknown): Promise<{ ok: true; basket: PricedBasket } | { ok: false; error: string }> {
-  const result = await getMenu();
+  const result = await getMenu({ fresh: true });
   if (!result.ok) return { ok: false, error: "The menu could not be loaded. Please try again." };
   return { ok: true, basket: priceBasket(pricingMenuFrom(result.menu), parseLines(input)) };
 }
