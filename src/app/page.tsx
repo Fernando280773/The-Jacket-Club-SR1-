@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BasketBar } from "@/components/BasketBar";
+import { BasketProvider } from "@/components/BasketProvider";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { FavouriteCard, ItemCard } from "@/components/ItemCard";
 import { OpenStatus } from "@/components/OpenStatus";
@@ -28,7 +30,8 @@ export default async function MenuPage() {
 
   const { menu } = result;
   return (
-    <main className="mx-auto max-w-xl px-4 pb-16">
+    <BasketProvider menu={menu}>
+    <main className="mx-auto max-w-xl px-4 pb-28">
       {isBeforeOpeningDay(new Date()) && (
         <p data-testid="opening-banner" className="-mx-4 bg-club-butter px-4 py-2 text-center text-sm font-bold text-club-ink">
           Ordering opens 10 December
@@ -83,5 +86,7 @@ export default async function MenuPage() {
         <p>{menu.address}</p>
       </footer>
     </main>
+    <BasketBar />
+    </BasketProvider>
   );
 }

@@ -13,6 +13,7 @@ const classic: MenuItem = {
   isFeatured: true,
   photoUrl: null,
   allergens: [{ id: 7, name: "Milk" }],
+  groupCodes: [],
 };
 
 describe("item card", () => {
