@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatPence } from "@/lib/money";
-import { adminClient } from "@/lib/server/admin";
+import { headers } from "next/headers";
+import { RememberOrder } from "@/components/YourOrderBar";
 import { fulfilSession } from "@/lib/server/fulfil";
+import { orderById } from "@/lib/server/orders";
+import { sendReceiptOnce } from "@/lib/server/receipt-email";
 import { ClearBasket } from "./ClearBasket";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Order confirmed · The Jacket Club SR1" };
-
-type OrderView = {
-  number: number;
-  type: "collect" | "table" | "delivery";
-  pickup_at: string | null;
-  total_pence: number;
-  dining_tables: { number: number } | null;
-  order_lines: { item_name: string; quantity: number; line_total_pence: number; order_line_options: { option_name: string; count: number }[] }[];
-};
 
 const ukTime = (iso: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
@@ -41,16 +35,15 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
     );
   }
 
-  const { data } = await adminClient()
-    .from("orders")
-    .select("number, type, pickup_at, total_pence, dining_tables(number), order_lines(item_name, quantity, line_total_pence, order_line_options(option_name, count))")
-    .eq("id", result.orderId)
-    .single();
-  const order = data as unknown as OrderView | null;
+  const h = await headers();
+  const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("x-forwarded-host") ?? h.get("host")}`;
+  await sendReceiptOnce(result.orderId, origin);
+  const order = await orderById(result.orderId);
 
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <ClearBasket />
+      {order && <RememberOrder token={order.access_token} number={order.number} />}
       <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-4xl" aria-hidden="true">
           ✓
@@ -60,7 +53,14 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
         </h1>
         {order?.type === "collect" && order.pickup_at && <p className="text-lg font-bold">Collect from 12–14 Park Lane at {ukTime(order.pickup_at)}</p>}
         {order?.type === "table" && order.dining_tables && <p className="text-lg font-bold">We&apos;ll bring it to table {order.dining_tables.number}</p>}
-        <p className="text-sm text-club-muted">Payment received. Show your order number when you collect.</p>
+        <p className="text-sm text-club-muted">
+          Payment received.{order?.customers?.email ? ` A receipt is on its way to ${order.customers.email}.` : ""} Show your order number when you collect.
+        </p>
+        {order && (
+          <Link href={`/order/${order.access_token}`} data-testid="track-order" className="mt-2 rounded-2xl bg-club-green px-5 py-3 font-bold text-club-paper">
+            Track your order
+          </Link>
+        )}
       </div>
       {order && (
         <section aria-label="Your order" className="mt-6 rounded-2xl bg-club-cream p-4">

@@ -6,6 +6,7 @@ import { CategoryTabs } from "@/components/CategoryTabs";
 import { FavouriteCard, ItemCard } from "@/components/ItemCard";
 import { OpenStatus } from "@/components/OpenStatus";
 import { OrderTypes } from "@/components/OrderTypes";
+import { YourOrderBar } from "@/components/YourOrderBar";
 import { getMenu } from "@/lib/menu";
 import { isBeforeOpeningDay } from "@/lib/opening";
 
@@ -32,6 +33,7 @@ export default async function MenuPage() {
   return (
     <BasketProvider menu={menu}>
     <main className="mx-auto max-w-xl px-4 pb-28">
+      <YourOrderBar />
       {isBeforeOpeningDay(new Date()) && (
         <p data-testid="opening-banner" className="-mx-4 bg-club-butter px-4 py-2 text-center text-sm font-bold text-club-ink">
           Ordering opens 10 December
