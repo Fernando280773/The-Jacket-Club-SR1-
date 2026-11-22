@@ -1,29 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { ORDER_TYPES, useBasket } from "./BasketProvider";
 
-const TYPES = [
-  { key: "collect", label: "Collect" },
-  { key: "table", label: "Table" },
-  { key: "book", label: "Book" },
-  { key: "delivery", label: "Delivery" },
-] as const;
-
-/** Visual only in Step 5. Each choice starts working in a later step (basket, booking, delivery). */
+/** How the customer wants their order. Remembered with the basket; checkout uses it from Step 7. */
 export function OrderTypes() {
-  const [chosen, setChosen] = useState<string>("collect");
+  const basket = useBasket();
+  const chosen = basket?.orderType ?? "collect";
   return (
     <div role="radiogroup" aria-label="How would you like your order?" className="grid grid-cols-4 gap-1 rounded-2xl bg-club-cream p-1">
-      {TYPES.map((t) => (
+      {ORDER_TYPES.map((t) => (
         <button
           key={t.key}
           type="button"
           role="radio"
           aria-checked={chosen === t.key}
-          onClick={() => setChosen(t.key)}
-          className={`rounded-xl py-2 text-sm font-bold transition-colors ${
-            chosen === t.key ? "bg-club-green text-club-paper" : "text-club-ink"
-          }`}
+          onClick={() => basket?.setOrderType(t.key)}
+          className={`rounded-xl py-2 text-sm font-bold transition-colors ${chosen === t.key ? "bg-club-green text-club-paper" : "text-club-ink"}`}
         >
           {t.label}
         </button>

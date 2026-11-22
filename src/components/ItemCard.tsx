@@ -1,5 +1,6 @@
 import { formatPence } from "@/lib/money";
 import type { MenuItem } from "@/lib/menu";
+import { OpenItemButton } from "./OpenItemButton";
 
 /** Photo placeholder until real food photos arrive after opening. */
 function PhotoPlaceholder({ name, size }: { name: string; size: "sm" | "lg" }) {
@@ -36,8 +37,9 @@ export function ItemCard({ item }: { item: MenuItem }) {
       data-testid="item-card"
       data-code={item.code}
       aria-label={item.name}
-      className={`flex gap-3 border-b border-club-line py-4 ${soldOut ? "opacity-50 grayscale" : ""}`}
+      className={`relative flex gap-3 border-b border-club-line py-4 ${soldOut ? "opacity-50 grayscale" : ""}`}
     >
+      {!soldOut && <OpenItemButton code={item.code} name={item.name} />}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <h3 className="font-bold leading-snug">{item.name}</h3>
         {item.description && <p className="text-sm text-club-muted">{item.description}</p>}
@@ -66,8 +68,9 @@ export function FavouriteCard({ item }: { item: MenuItem }) {
     <article
       data-testid="favourite-card"
       aria-label={item.name}
-      className={`flex w-40 shrink-0 snap-start flex-col gap-2 ${item.isAvailable ? "" : "opacity-50 grayscale"}`}
+      className={`relative flex w-40 shrink-0 snap-start flex-col gap-2 ${item.isAvailable ? "" : "opacity-50 grayscale"}`}
     >
+      {item.isAvailable && <OpenItemButton code={item.code} name={item.name} />}
       <PhotoPlaceholder name={item.name} size="lg" />
       <h3 className="text-sm font-bold leading-snug">{item.name}</h3>
       <div className="flex items-center gap-2">

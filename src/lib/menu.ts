@@ -3,6 +3,26 @@ import type { DayHours } from "./opening";
 
 export type Allergen = { id: number; name: string };
 
+export type OptionControl = "pick_one" | "tick_boxes" | "counter";
+
+export type MenuOption = {
+  id: string;
+  name: string;
+  priceChangePence: number;
+  isAvailable: boolean;
+  allergens: Allergen[];
+};
+
+export type OptionGroup = {
+  code: string;
+  name: string;
+  required: boolean;
+  min: number;
+  max: number;
+  control: OptionControl;
+  options: MenuOption[];
+};
+
 export type MenuItem = {
   code: string;
   name: string;
@@ -13,6 +33,8 @@ export type MenuItem = {
   isFeatured: boolean;
   photoUrl: string | null;
   allergens: Allergen[];
+  /** Option groups shown in the item pop-up, in order. */
+  groupCodes: string[];
 };
 
 export type MenuCategory = { name: string; slug: string; items: MenuItem[] };
@@ -24,12 +46,22 @@ export type Menu = {
   categories: MenuCategory[];
   featured: MenuItem[];
   allergens: Allergen[];
+  groups: Record<string, OptionGroup>;
+  /** Smallest delivery order before the delivery fee, in pence. */
+  deliveryMinPence: number;
 };
 
 export type MenuResult = { ok: true; menu: Menu } | { ok: false; error: string };
 
 export const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+type AllergenLink = { allergens: Allergen | null };
+const toAllergens = (links: AllergenLink[] | null | undefined) =>
+  (links ?? [])
+    .map((l) => l.allergens)
+    .filter((a): a is Allergen => a !== null)
+    .sort((a, b) => a.id - b.id);
 
 type ItemRow = {
   code: string;
@@ -41,32 +73,81 @@ type ItemRow = {
   is_featured: boolean;
   photo_url: string | null;
   sort: number;
-  item_allergens: { allergens: Allergen | null }[];
+  item_allergens: AllergenLink[];
+  item_option_groups: { sort: number; option_groups: { code: string } | null }[];
 };
 
-/** Reads the whole menu for the shop from Supabase in three queries. */
+type GroupRow = {
+  code: string;
+  name: string;
+  is_required: boolean;
+  min_choices: number;
+  max_choices: number;
+  control: OptionControl;
+  options: {
+    id: string;
+    name: string;
+    price_change_pence: number;
+    is_available: boolean;
+    sort: number;
+    option_allergens: AllergenLink[];
+  }[];
+};
+
+const settingsOf = (s: unknown) =>
+  (Array.isArray(s) ? s[0] : s) as { delivery_min_order_pence: number } | undefined;
+
+/** Reads the whole menu for the shop from Supabase in four queries. */
 export async function getMenu(): Promise<MenuResult> {
   try {
     const db = publicClient();
     const { data: shop, error: shopError } = await db
       .from("shops")
-      .select("id, name, address, postcode, opening_hours(iso_day, opens, closes)")
+      .select("id, name, address, postcode, opening_hours(iso_day, opens, closes), shop_settings(delivery_min_order_pence)")
       .eq("slug", SHOP_SLUG)
       .single();
     if (shopError || !shop) return { ok: false, error: shopError?.message ?? "Shop not found" };
 
-    const [cats, allergens] = await Promise.all([
+    const [cats, allergens, groupRows] = await Promise.all([
       db
         .from("categories")
         .select(
-          "name, sort, items(code, name, description, price_pence, is_halal, is_available, is_featured, photo_url, sort, item_allergens(allergens(id, name)))",
+          "name, sort, items(code, name, description, price_pence, is_halal, is_available, is_featured, photo_url, sort, item_allergens(allergens(id, name)), item_option_groups(sort, option_groups(code)))",
         )
         .eq("shop_id", shop.id)
         .order("sort"),
       db.from("allergens").select("id, name").order("id"),
+      db
+        .from("option_groups")
+        .select(
+          "code, name, is_required, min_choices, max_choices, control, options(id, name, price_change_pence, is_available, sort, option_allergens(allergens(id, name)))",
+        )
+        .eq("shop_id", shop.id),
     ]);
     if (cats.error) return { ok: false, error: cats.error.message };
     if (allergens.error) return { ok: false, error: allergens.error.message };
+    if (groupRows.error) return { ok: false, error: groupRows.error.message };
+
+    const groups: Record<string, OptionGroup> = {};
+    for (const g of (groupRows.data ?? []) as unknown as GroupRow[]) {
+      groups[g.code] = {
+        code: g.code,
+        name: g.name,
+        required: g.is_required,
+        min: g.min_choices,
+        max: g.max_choices,
+        control: g.control,
+        options: [...g.options]
+          .sort((a, b) => a.sort - b.sort)
+          .map((o) => ({
+            id: o.id,
+            name: o.name,
+            priceChangePence: o.price_change_pence,
+            isAvailable: o.is_available,
+            allergens: toAllergens(o.option_allergens),
+          })),
+      };
+    }
 
     const categories: MenuCategory[] = (cats.data ?? []).map((c) => ({
       name: c.name,
@@ -82,10 +163,11 @@ export async function getMenu(): Promise<MenuResult> {
           isAvailable: i.is_available,
           isFeatured: i.is_featured,
           photoUrl: i.photo_url,
-          allergens: i.item_allergens
-            .map((ia) => ia.allergens)
-            .filter((a): a is Allergen => a !== null)
-            .sort((a, b) => a.id - b.id),
+          allergens: toAllergens(i.item_allergens),
+          groupCodes: [...i.item_option_groups]
+            .sort((a, b) => a.sort - b.sort)
+            .map((l) => l.option_groups?.code)
+            .filter((code): code is string => !!code && code in groups),
         })),
     }));
 
@@ -98,6 +180,8 @@ export async function getMenu(): Promise<MenuResult> {
         categories,
         featured: categories.flatMap((c) => c.items).filter((i) => i.isFeatured),
         allergens: allergens.data ?? [],
+        groups,
+        deliveryMinPence: settingsOf(shop.shop_settings)?.delivery_min_order_pence ?? 1200,
       },
     };
   } catch (e) {
