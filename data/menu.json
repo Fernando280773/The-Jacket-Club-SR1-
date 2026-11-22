@@ -1,0 +1,1700 @@
+{
+  "source": "The Jacket Club Menu Sheet, revision 9, read 22 Nov 2026",
+  "categories": [
+    "Jackets",
+    "Smash Burgers",
+    "Wraps",
+    "Sandwiches",
+    "Breakfast (all day)",
+    "Sides",
+    "Kids",
+    "Hot drinks",
+    "Cold drinks",
+    "Desserts"
+  ],
+  "featured": [
+    "J01",
+    "J04",
+    "J05",
+    "B02"
+  ],
+  "items": [
+    {
+      "code": "J01",
+      "category": "Jackets",
+      "name": "The Classic",
+      "price_pence": 550,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Fluffy jacket with butter and grated mature cheddar",
+      "available": true
+    },
+    {
+      "code": "J02",
+      "category": "Jackets",
+      "name": "Beans & Cheese",
+      "price_pence": 625,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Baked beans topped with melted cheddar",
+      "available": true
+    },
+    {
+      "code": "J03",
+      "category": "Jackets",
+      "name": "Tuna Mayo & Sweetcorn",
+      "price_pence": 675,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Fish",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Tuna, mayo and sweetcorn",
+      "available": true
+    },
+    {
+      "code": "J04",
+      "category": "Jackets",
+      "name": "Beef Chilli & Cheese",
+      "price_pence": 795,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Celery"
+      ],
+      "halal": true,
+      "description": "Slow-cooked halal beef chilli with cheddar",
+      "available": true
+    },
+    {
+      "code": "J05",
+      "category": "Jackets",
+      "name": "Chicken Tikka",
+      "price_pence": 795,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Chicken tikka with mint yoghurt",
+      "available": true
+    },
+    {
+      "code": "J06",
+      "category": "Jackets",
+      "name": "Coronation Chicken",
+      "price_pence": 750,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Eggs",
+        "Mustard",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Creamy mild curry chicken",
+      "available": true
+    },
+    {
+      "code": "J07",
+      "category": "Jackets",
+      "name": "BBQ Pulled Chicken & Cheese",
+      "price_pence": 795,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Mustard",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Smoky BBQ pulled chicken with cheddar",
+      "available": true
+    },
+    {
+      "code": "J08",
+      "category": "Jackets",
+      "name": "Turkey Bacon & Cheese",
+      "price_pence": 725,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Crispy turkey bacon, cheddar and spring onion",
+      "available": true
+    },
+    {
+      "code": "J09",
+      "category": "Jackets",
+      "name": "Veggie Chilli & Cheese",
+      "price_pence": 725,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Celery"
+      ],
+      "halal": true,
+      "description": "Bean and vegetable chilli with cheddar",
+      "available": true
+    },
+    {
+      "code": "J10",
+      "category": "Jackets",
+      "name": "Cheese & Coleslaw",
+      "price_pence": 625,
+      "option_groups": [
+        "G_JFILL2",
+        "G_JTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Milk",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Cheddar and creamy coleslaw",
+      "available": true
+    },
+    {
+      "code": "B01",
+      "category": "Smash Burgers",
+      "name": "Single Smash Cheeseburger",
+      "price_pence": 695,
+      "option_groups": [
+        "G_PATTY",
+        "G_BTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "4oz halal beef smash patty, American cheese, onions, pickles, brioche bun",
+      "available": true
+    },
+    {
+      "code": "B02",
+      "category": "Smash Burgers",
+      "name": "Double Smash Cheeseburger",
+      "price_pence": 950,
+      "option_groups": [
+        "G_PATTY",
+        "G_BTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Two 4oz halal smash patties, double cheese, onions, pickles",
+      "available": true
+    },
+    {
+      "code": "B03",
+      "category": "Smash Burgers",
+      "name": "The Club Double",
+      "price_pence": 1050,
+      "option_groups": [
+        "G_PATTY",
+        "G_BTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk",
+        "Eggs",
+        "Mustard",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Two patties, turkey bacon, double cheese and Club house sauce",
+      "available": true
+    },
+    {
+      "code": "B04",
+      "category": "Smash Burgers",
+      "name": "Spicy Double",
+      "price_pence": 995,
+      "option_groups": [
+        "G_PATTY",
+        "G_BTOP",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Two patties, jalapeños, hot sauce and garlic mayo",
+      "available": true
+    },
+    {
+      "code": "B05",
+      "category": "Smash Burgers",
+      "name": "Junior Burger",
+      "price_pence": 450,
+      "option_groups": [
+        "G_BTOP",
+        "G_SAUCE"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Smaller smash patty with cheese, for kids",
+      "available": true
+    },
+    {
+      "code": "W01",
+      "category": "Wraps",
+      "name": "Chicken Tikka Wrap",
+      "price_pence": 695,
+      "option_groups": [
+        "G_TOAST",
+        "G_SALAD",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "12\" tortilla with chicken tikka and salad",
+      "available": true
+    },
+    {
+      "code": "W02",
+      "category": "Wraps",
+      "name": "BBQ Pulled Chicken Wrap",
+      "price_pence": 695,
+      "option_groups": [
+        "G_TOAST",
+        "G_SALAD",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Mustard",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "12\" tortilla with BBQ pulled chicken and cheese",
+      "available": true
+    },
+    {
+      "code": "W03",
+      "category": "Wraps",
+      "name": "Tuna Mayo Wrap",
+      "price_pence": 595,
+      "option_groups": [
+        "G_TOAST",
+        "G_SALAD",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "12\" tortilla with tuna mayo and sweetcorn",
+      "available": true
+    },
+    {
+      "code": "W04",
+      "category": "Wraps",
+      "name": "Beef Chilli & Cheese Wrap",
+      "price_pence": 695,
+      "option_groups": [
+        "G_TOAST",
+        "G_SALAD",
+        "G_SAUCE",
+        "G_EXTRA",
+        "G_MEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Celery"
+      ],
+      "halal": true,
+      "description": "12\" tortilla with beef chilli and cheddar",
+      "available": true
+    },
+    {
+      "code": "W05",
+      "category": "Wraps",
+      "name": "Breakfast Wrap",
+      "price_pence": 650,
+      "option_groups": [
+        "G_TOAST",
+        "G_SAUCE",
+        "G_EXTRA"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Turkey bacon, chicken sausage, egg and hash brown",
+      "available": true
+    },
+    {
+      "code": "S01",
+      "category": "Sandwiches",
+      "name": "Cheese & Pickle",
+      "price_pence": 395,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Mature cheddar and pickle",
+      "available": true
+    },
+    {
+      "code": "S02",
+      "category": "Sandwiches",
+      "name": "Turkey Ham & Cheese",
+      "price_pence": 450,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Turkey ham and cheddar",
+      "available": true
+    },
+    {
+      "code": "S03",
+      "category": "Sandwiches",
+      "name": "Tuna Mayo",
+      "price_pence": 450,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Tuna mayo and sweetcorn",
+      "available": true
+    },
+    {
+      "code": "S04",
+      "category": "Sandwiches",
+      "name": "Chicken Mayo & Sweetcorn",
+      "price_pence": 475,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Chicken, mayo and sweetcorn",
+      "available": true
+    },
+    {
+      "code": "S05",
+      "category": "Sandwiches",
+      "name": "Egg Mayo",
+      "price_pence": 395,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Free-range egg mayo",
+      "available": true
+    },
+    {
+      "code": "S06",
+      "category": "Sandwiches",
+      "name": "Coronation Chicken",
+      "price_pence": 495,
+      "option_groups": [
+        "G_BREAD",
+        "G_SALAD"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Mustard",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Creamy mild curry chicken",
+      "available": true
+    },
+    {
+      "code": "F01",
+      "category": "Breakfast (all day)",
+      "name": "The Full Club",
+      "price_pence": 895,
+      "option_groups": [
+        "G_EGG",
+        "G_TOASTTYPE",
+        "G_BFEXTRA"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "2 chicken sausages, 2 turkey bacon, 2 eggs, beans, hash brown, mushrooms, tomato, toast",
+      "available": true
+    },
+    {
+      "code": "F02",
+      "category": "Breakfast (all day)",
+      "name": "Mini Breakfast",
+      "price_pence": 625,
+      "option_groups": [
+        "G_EGG",
+        "G_TOASTTYPE",
+        "G_BFEXTRA"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Chicken sausage, turkey bacon, egg, beans, hash brown, toast",
+      "available": true
+    },
+    {
+      "code": "F03",
+      "category": "Breakfast (all day)",
+      "name": "Veggie Breakfast",
+      "price_pence": 795,
+      "option_groups": [
+        "G_EGG",
+        "G_TOASTTYPE",
+        "G_BFEXTRA"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "2 eggs, halloumi, beans, 2 hash browns, mushrooms, tomato, toast",
+      "available": true
+    },
+    {
+      "code": "F04",
+      "category": "Breakfast (all day)",
+      "name": "Breakfast Bap",
+      "price_pence": 425,
+      "option_groups": [
+        "G_BAPFILL",
+        "G_SAUCE"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Sulphites"
+      ],
+      "halal": true,
+      "description": "Soft bap with two fillings of your choice",
+      "available": true
+    },
+    {
+      "code": "F05",
+      "category": "Breakfast (all day)",
+      "name": "Beans on Toast",
+      "price_pence": 375,
+      "option_groups": [
+        "G_TOASTTYPE",
+        "G_BFEXTRA"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Two slices of toast with baked beans",
+      "available": true
+    },
+    {
+      "code": "F06",
+      "category": "Breakfast (all day)",
+      "name": "Cheese on Toast",
+      "price_pence": 350,
+      "option_groups": [
+        "G_TOASTTYPE"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Grilled cheddar on two slices of toast",
+      "available": true
+    },
+    {
+      "code": "X01",
+      "category": "Sides",
+      "name": "Fries",
+      "price_pence": 295,
+      "option_groups": [],
+      "allergens": [],
+      "halal": true,
+      "description": "Skin-on fries",
+      "available": true
+    },
+    {
+      "code": "X02",
+      "category": "Sides",
+      "name": "Cheesy Fries",
+      "price_pence": 375,
+      "option_groups": [],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Fries with melted cheese",
+      "available": true
+    },
+    {
+      "code": "X03",
+      "category": "Sides",
+      "name": "Loaded Chilli Fries",
+      "price_pence": 495,
+      "option_groups": [],
+      "allergens": [
+        "Milk",
+        "Celery"
+      ],
+      "halal": true,
+      "description": "Fries with beef chilli, cheese and jalapeños",
+      "available": true
+    },
+    {
+      "code": "X04",
+      "category": "Sides",
+      "name": "Hash Browns (2)",
+      "price_pence": 195,
+      "option_groups": [],
+      "allergens": [],
+      "halal": true,
+      "description": "Two crispy hash browns",
+      "available": true
+    },
+    {
+      "code": "X05",
+      "category": "Sides",
+      "name": "Onion Rings",
+      "price_pence": 295,
+      "option_groups": [],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Battered onion rings",
+      "available": true
+    },
+    {
+      "code": "X06",
+      "category": "Sides",
+      "name": "Coleslaw Pot",
+      "price_pence": 150,
+      "option_groups": [],
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Creamy coleslaw",
+      "available": true
+    },
+    {
+      "code": "X07",
+      "category": "Sides",
+      "name": "Side Salad",
+      "price_pence": 250,
+      "option_groups": [],
+      "allergens": [],
+      "halal": true,
+      "description": "Mixed leaves, tomato, cucumber, red onion",
+      "available": true
+    },
+    {
+      "code": "K01",
+      "category": "Kids",
+      "name": "Kids Jacket & Juice",
+      "price_pence": 495,
+      "option_groups": [
+        "G_KIDSJ",
+        "G_JUICE"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Small jacket with cheese or beans, and a juice",
+      "available": true
+    },
+    {
+      "code": "K02",
+      "category": "Kids",
+      "name": "Junior Burger Meal",
+      "price_pence": 595,
+      "option_groups": [
+        "G_BTOP",
+        "G_JUICE"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Junior burger, small fries and a juice",
+      "available": true
+    },
+    {
+      "code": "D01",
+      "category": "Hot drinks",
+      "name": "Tea",
+      "price_pence": 180,
+      "option_groups": [
+        "G_DSIZE",
+        "G_MILK"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Yorkshire-style builders' tea",
+      "available": true
+    },
+    {
+      "code": "D02",
+      "category": "Hot drinks",
+      "name": "Americano",
+      "price_pence": 260,
+      "option_groups": [
+        "G_DSIZE",
+        "G_SYRUP",
+        "G_SHOT"
+      ],
+      "allergens": [],
+      "halal": true,
+      "description": "Espresso topped with hot water",
+      "available": true
+    },
+    {
+      "code": "D03",
+      "category": "Hot drinks",
+      "name": "Latte",
+      "price_pence": 310,
+      "option_groups": [
+        "G_DSIZE",
+        "G_MILK",
+        "G_SYRUP",
+        "G_SHOT"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Espresso with steamed milk",
+      "available": true
+    },
+    {
+      "code": "D04",
+      "category": "Hot drinks",
+      "name": "Cappuccino",
+      "price_pence": 310,
+      "option_groups": [
+        "G_DSIZE",
+        "G_MILK",
+        "G_SYRUP",
+        "G_SHOT"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Espresso, steamed milk and foam",
+      "available": true
+    },
+    {
+      "code": "D05",
+      "category": "Hot drinks",
+      "name": "Flat White",
+      "price_pence": 320,
+      "option_groups": [
+        "G_MILK",
+        "G_SYRUP",
+        "G_SHOT"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Double espresso with silky milk",
+      "available": true
+    },
+    {
+      "code": "D06",
+      "category": "Hot drinks",
+      "name": "Mocha",
+      "price_pence": 350,
+      "option_groups": [
+        "G_DSIZE",
+        "G_MILK",
+        "G_SYRUP",
+        "G_SHOT"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Espresso, chocolate and steamed milk",
+      "available": true
+    },
+    {
+      "code": "D07",
+      "category": "Hot drinks",
+      "name": "Hot Chocolate",
+      "price_pence": 320,
+      "option_groups": [
+        "G_DSIZE",
+        "G_MILK"
+      ],
+      "allergens": [
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Rich hot chocolate",
+      "available": true
+    },
+    {
+      "code": "C01",
+      "category": "Cold drinks",
+      "name": "Can",
+      "price_pence": 150,
+      "option_groups": [
+        "G_CAN"
+      ],
+      "allergens": [],
+      "halal": true,
+      "description": "330ml can",
+      "available": true
+    },
+    {
+      "code": "C02",
+      "category": "Cold drinks",
+      "name": "Bottled Water",
+      "price_pence": 120,
+      "option_groups": [],
+      "allergens": [],
+      "halal": true,
+      "description": "500ml still water",
+      "available": true
+    },
+    {
+      "code": "C03",
+      "category": "Cold drinks",
+      "name": "Fruit Juice",
+      "price_pence": 180,
+      "option_groups": [
+        "G_JUICE"
+      ],
+      "allergens": [],
+      "halal": true,
+      "description": "Carton of juice",
+      "available": true
+    },
+    {
+      "code": "E01",
+      "category": "Desserts",
+      "name": "Chocolate Brownie",
+      "price_pence": 295,
+      "option_groups": [],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Milk",
+        "Soya"
+      ],
+      "halal": true,
+      "description": "Gooey chocolate brownie",
+      "available": true
+    }
+  ],
+  "option_groups": [
+    {
+      "code": "G_JFILL2",
+      "name": "Add a second filling",
+      "required": false,
+      "min": 0,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_JTOP",
+      "name": "Toppings",
+      "required": false,
+      "min": 0,
+      "max": 4,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_SAUCE",
+      "name": "Sauces",
+      "required": false,
+      "min": 0,
+      "max": 3,
+      "control": "counter"
+    },
+    {
+      "code": "G_EXTRA",
+      "name": "Extras",
+      "required": false,
+      "min": 0,
+      "max": 5,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_MEAL",
+      "name": "Make it a meal",
+      "required": false,
+      "min": 0,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_PATTY",
+      "name": "Extra smash patty",
+      "required": false,
+      "min": 0,
+      "max": 2,
+      "control": "counter"
+    },
+    {
+      "code": "G_BTOP",
+      "name": "Burger toppings",
+      "required": false,
+      "min": 0,
+      "max": 6,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_BMEAL",
+      "name": "Make it a meal",
+      "required": false,
+      "min": 0,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_TOAST",
+      "name": "Wrap style",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_SALAD",
+      "name": "Salad",
+      "required": false,
+      "min": 0,
+      "max": 4,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_BREAD",
+      "name": "Bread",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_EGG",
+      "name": "Eggs",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_TOASTTYPE",
+      "name": "Toast",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_BFEXTRA",
+      "name": "Breakfast extras",
+      "required": false,
+      "min": 0,
+      "max": 6,
+      "control": "counter"
+    },
+    {
+      "code": "G_BAPFILL",
+      "name": "Bap fillings",
+      "required": true,
+      "min": 1,
+      "max": 2,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_KIDSJ",
+      "name": "Kids filling",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_DSIZE",
+      "name": "Size",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_MILK",
+      "name": "Milk",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_SYRUP",
+      "name": "Syrup",
+      "required": false,
+      "min": 0,
+      "max": 2,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_SHOT",
+      "name": "Extra shot",
+      "required": false,
+      "min": 0,
+      "max": 1,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_CAN",
+      "name": "Choose your can",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_JUICE",
+      "name": "Choose your juice",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    }
+  ],
+  "options": [
+    {
+      "group": "G_JFILL2",
+      "name": "Cheese",
+      "price_change_pence": 80,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Beans",
+      "price_change_pence": 100,
+      "allergens": []
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Tuna mayo",
+      "price_change_pence": 150,
+      "allergens": [
+        "Fish",
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Beef chilli",
+      "price_change_pence": 200,
+      "allergens": [
+        "Celery"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Chicken tikka",
+      "price_change_pence": 200,
+      "allergens": [
+        "Milk",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Coronation chicken",
+      "price_change_pence": 180,
+      "allergens": [
+        "Eggs",
+        "Mustard",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "BBQ pulled chicken",
+      "price_change_pence": 200,
+      "allergens": [
+        "Mustard",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Turkey bacon",
+      "price_change_pence": 150,
+      "allergens": [
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_JFILL2",
+      "name": "Coleslaw",
+      "price_change_pence": 80,
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_JTOP",
+      "name": "Sweetcorn",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_JTOP",
+      "name": "Spring onion",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_JTOP",
+      "name": "Jalapeños",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_JTOP",
+      "name": "Red onion",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "Garlic mayo",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "Club house sauce",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "Chilli sauce",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "BBQ",
+      "price_change_pence": 0,
+      "allergens": [
+        "Mustard",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "Ketchup",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SAUCE",
+      "name": "Sriracha",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_EXTRA",
+      "name": "Extra cheese",
+      "price_change_pence": 80,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_EXTRA",
+      "name": "Turkey bacon",
+      "price_change_pence": 140,
+      "allergens": [
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_EXTRA",
+      "name": "Fried egg",
+      "price_change_pence": 80,
+      "allergens": [
+        "Eggs"
+      ]
+    },
+    {
+      "group": "G_EXTRA",
+      "name": "Halloumi",
+      "price_change_pence": 150,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_EXTRA",
+      "name": "Jalapeños",
+      "price_change_pence": 50,
+      "allergens": []
+    },
+    {
+      "group": "G_MEAL",
+      "name": "Can + side salad",
+      "price_change_pence": 250,
+      "allergens": []
+    },
+    {
+      "group": "G_MEAL",
+      "name": "Can + fries",
+      "price_change_pence": 300,
+      "allergens": []
+    },
+    {
+      "group": "G_PATTY",
+      "name": "Extra 4oz smash patty",
+      "price_change_pence": 200,
+      "allergens": []
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Cheese",
+      "price_change_pence": 0,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Onions",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Grilled onions",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Pickles",
+      "price_change_pence": 0,
+      "allergens": [
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Lettuce",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_BTOP",
+      "name": "Tomato",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_BMEAL",
+      "name": "Fries + can",
+      "price_change_pence": 300,
+      "allergens": []
+    },
+    {
+      "group": "G_BMEAL",
+      "name": "Cheesy fries + can",
+      "price_change_pence": 380,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_TOAST",
+      "name": "Toasted",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_TOAST",
+      "name": "Cold",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SALAD",
+      "name": "Lettuce",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SALAD",
+      "name": "Tomato",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SALAD",
+      "name": "Cucumber",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SALAD",
+      "name": "Red onion",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_BREAD",
+      "name": "White",
+      "price_change_pence": 0,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_BREAD",
+      "name": "Brown",
+      "price_change_pence": 0,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_BREAD",
+      "name": "Baguette",
+      "price_change_pence": 50,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_BREAD",
+      "name": "Toasted panini",
+      "price_change_pence": 100,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_EGG",
+      "name": "Fried",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs"
+      ]
+    },
+    {
+      "group": "G_EGG",
+      "name": "Scrambled",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs",
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_EGG",
+      "name": "Poached",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs"
+      ]
+    },
+    {
+      "group": "G_TOASTTYPE",
+      "name": "White",
+      "price_change_pence": 0,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_TOASTTYPE",
+      "name": "Brown",
+      "price_change_pence": 0,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Chicken sausage",
+      "price_change_pence": 100,
+      "allergens": [
+        "Gluten",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Turkey bacon",
+      "price_change_pence": 120,
+      "allergens": [
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Egg",
+      "price_change_pence": 80,
+      "allergens": [
+        "Eggs"
+      ]
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Hash brown",
+      "price_change_pence": 70,
+      "allergens": []
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Beans",
+      "price_change_pence": 70,
+      "allergens": []
+    },
+    {
+      "group": "G_BFEXTRA",
+      "name": "Extra toast",
+      "price_change_pence": 60,
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    {
+      "group": "G_BAPFILL",
+      "name": "Chicken sausage",
+      "price_change_pence": 0,
+      "allergens": [
+        "Gluten",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_BAPFILL",
+      "name": "Turkey bacon",
+      "price_change_pence": 0,
+      "allergens": [
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_BAPFILL",
+      "name": "Fried egg",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs"
+      ]
+    },
+    {
+      "group": "G_BAPFILL",
+      "name": "Hash brown",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_KIDSJ",
+      "name": "Cheese",
+      "price_change_pence": 0,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_KIDSJ",
+      "name": "Beans",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_DSIZE",
+      "name": "Regular",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_DSIZE",
+      "name": "Large",
+      "price_change_pence": 50,
+      "allergens": []
+    },
+    {
+      "group": "G_MILK",
+      "name": "Whole",
+      "price_change_pence": 0,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_MILK",
+      "name": "Semi-skimmed",
+      "price_change_pence": 0,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_MILK",
+      "name": "Oat",
+      "price_change_pence": 40,
+      "allergens": [
+        "Gluten"
+      ],
+      "note": "Sheet says: Gluten (unless certified oat milk)"
+    },
+    {
+      "group": "G_MILK",
+      "name": "No milk",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_SYRUP",
+      "name": "Caramel",
+      "price_change_pence": 40,
+      "allergens": []
+    },
+    {
+      "group": "G_SYRUP",
+      "name": "Vanilla",
+      "price_change_pence": 40,
+      "allergens": []
+    },
+    {
+      "group": "G_SYRUP",
+      "name": "Hazelnut",
+      "price_change_pence": 40,
+      "allergens": []
+    },
+    {
+      "group": "G_SHOT",
+      "name": "Extra espresso shot",
+      "price_change_pence": 60,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Coca-Cola",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Diet Coke",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Coke Zero",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Fanta Orange",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Sprite",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_CAN",
+      "name": "Irn-Bru",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_JUICE",
+      "name": "Orange",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_JUICE",
+      "name": "Apple",
+      "price_change_pence": 0,
+      "allergens": []
+    }
+  ]
+}
