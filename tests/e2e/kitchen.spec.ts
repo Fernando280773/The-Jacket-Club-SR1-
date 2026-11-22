@@ -76,7 +76,8 @@ test("the board shows orders in columns and moves them on a tap", async ({ page 
 
   await fresh.nth(1).getByTestId("order-action").click();
   await expect(page.getByTestId("col-preparing").getByTestId("kitchen-order")).toHaveCount(2);
-  expect(rpcCalls).toContainEqual({ p_order_id: "a", p_from: "received", p_to: "preparing" });
+  // The card moves straight away; the database call follows a moment later.
+  await expect.poll(() => rpcCalls).toContainEqual({ p_order_id: "a", p_from: "received", p_to: "preparing" });
 
   const ready = page.getByTestId("col-preparing").locator('[data-number="1012"]');
   await ready.getByTestId("order-action").click();
