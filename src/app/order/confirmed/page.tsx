@@ -79,6 +79,12 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
               </li>
             ))}
           </ul>
+          {order.deposit_credit_pence > 0 && (
+            <div className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold text-club-green">
+              <span>Booking deposit</span>
+              <span>−{formatPence(order.deposit_credit_pence)}</span>
+            </div>
+          )}
           <div className="mt-3 flex justify-between border-t border-club-line pt-3 font-bold">
             <span>Paid</span>
             <span>{formatPence(order.total_pence)}</span>

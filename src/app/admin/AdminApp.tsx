@@ -2,16 +2,22 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { StaffGate, type Staff } from "@/components/StaffGate";
+import { BookingsTab } from "./BookingsTab";
 import { HoursTab } from "./HoursTab";
 import { MenuTab } from "./MenuTab";
 import { TodayTab } from "./TodayTab";
 
-type Tab = "today" | "menu" | "hours" | "stock";
+type Tab = "today" | "menu" | "bookings" | "hours" | "stock";
 
 const OWNER_TABS: { id: Tab; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "menu", label: "Menu" },
+  { id: "bookings", label: "Bookings" },
   { id: "hours", label: "Opening hours" },
+];
+const KITCHEN_TABS: { id: Tab; label: string }[] = [
+  { id: "stock", label: "Sold out" },
+  { id: "bookings", label: "Bookings" },
 ];
 
 /** Admin: the owner sees everything; kitchen staff only get the Sold out switches. */
@@ -27,9 +33,12 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
   const isOwner = staff.role === "owner";
   const [tab, setTab] = useState<Tab>(isOwner ? "today" : "stock");
 
+  const tabs = isOwner ? OWNER_TABS : KITCHEN_TABS;
+
   useEffect(() => {
     const wanted = new URLSearchParams(window.location.search).get("tab") as Tab | null;
-    if (wanted && (wanted === "stock" || isOwner)) setTab(wanted === "stock" && isOwner ? "menu" : wanted);
+    const mapped = wanted === "stock" && isOwner ? "menu" : wanted;
+    if (mapped && (isOwner ? OWNER_TABS : KITCHEN_TABS).some((t) => t.id === mapped)) setTab(mapped);
   }, [isOwner]);
 
   const choose = (t: Tab) => {
@@ -40,7 +49,7 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col">
       <header className="flex flex-wrap items-center justify-between gap-3 bg-club-green px-4 py-3 text-club-paper">
-        <h1 className="font-display text-xl">{isOwner ? "Admin" : "Sold out"}</h1>
+        <h1 className="font-display text-xl">{isOwner ? "Admin" : "Kitchen admin"}</h1>
         <div className="flex items-center gap-3 text-sm">
           <a href="/kitchen" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
             Kitchen
@@ -49,9 +58,9 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
           {signOut}
         </div>
       </header>
-      {isOwner && (
+      {(
         <nav aria-label="Admin sections" className="flex gap-2 overflow-x-auto border-b border-club-line px-4 py-2">
-          {OWNER_TABS.map((t) => (
+          {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -69,7 +78,8 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
         {tab === "today" && isOwner && <TodayTab staff={staff} />}
         {tab === "menu" && isOwner && <MenuTab staff={staff} mode="owner" />}
         {tab === "hours" && isOwner && <HoursTab staff={staff} />}
-        {(tab === "stock" || !isOwner) && <MenuTab staff={staff} mode="stock" />}
+        {tab === "bookings" && <BookingsTab staff={staff} />}
+        {tab === "stock" && <MenuTab staff={staff} mode="stock" />}
       </div>
     </main>
   );

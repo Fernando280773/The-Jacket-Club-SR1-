@@ -12,6 +12,7 @@ export type OrderView = {
   subtotal_pence: number;
   delivery_fee_pence: number;
   total_pence: number;
+  deposit_credit_pence: number;
   created_at: string;
   access_token: string;
   receipt_sent_at: string | null;
@@ -22,7 +23,7 @@ export type OrderView = {
 };
 
 const SELECT =
-  "id, number, type, status, pickup_at, subtotal_pence, delivery_fee_pence, total_pence, created_at, access_token, receipt_sent_at, customer_name, dining_tables(number), customers(email), order_lines(item_name, quantity, unit_price_pence, line_total_pence, order_line_options(group_name, option_name, count))";
+  "id, number, type, status, pickup_at, subtotal_pence, delivery_fee_pence, total_pence, deposit_credit_pence, created_at, access_token, receipt_sent_at, customer_name, dining_tables(number), customers(email), order_lines(item_name, quantity, unit_price_pence, line_total_pence, order_line_options(group_name, option_name, count))";
 
 export async function orderById(id: string): Promise<OrderView | null> {
   const { data } = await adminClient().from("orders").select(SELECT).eq("id", id).maybeSingle();

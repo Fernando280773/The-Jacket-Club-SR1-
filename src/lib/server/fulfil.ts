@@ -14,7 +14,7 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
   try {
     const session = typeof sessionOrId === "string" ? await stripe().checkout.sessions.retrieve(sessionOrId) : sessionOrId;
     const m = session.metadata ?? {};
-    if (!m.basket_id) return { ok: false, reason: "not_ours", message: "Not a Jacket Club checkout" };
+    if (!m.basket_id) return { ok: false, reason: "not_ours", message: "Not a Jacket Club order checkout" };
     if (session.payment_status !== "paid") return { ok: false, reason: "unpaid", message: "Payment not completed" };
     const paymentIntent = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
     if (!paymentIntent) return { ok: false, reason: "error", message: "No payment reference" };
@@ -28,6 +28,8 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
       // Our form's email first; otherwise the one typed on Stripe's payment page.
       p_email: m.email || session.customer_details?.email || "",
       p_pickup_at: m.pickup_at || null,
+      p_booking_id: m.deposit_booking_id || null,
+      p_credit_pence: Number(m.deposit_credit_pence) || 0,
     });
     if (error) return { ok: false, reason: "error", message: error.message };
     const row = (Array.isArray(data) ? data[0] : data) as { order_id: string; order_number: number; created: boolean } | undefined;

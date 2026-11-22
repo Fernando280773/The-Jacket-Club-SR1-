@@ -53,11 +53,12 @@ async function fakeAdmin(page: Page, role: "owner" | "kitchen") {
   return { rpc };
 }
 
-test("kitchen login only gets the Sold out switches", async ({ page }) => {
+test("kitchen login only gets Sold out and Bookings", async ({ page }) => {
   const { rpc } = await fakeAdmin(page, "kitchen");
   await page.goto("/admin");
-  await expect(page.getByRole("heading", { name: "Sold out" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Kitchen admin" })).toBeVisible();
   await expect(page.getByTestId("tab-today")).toHaveCount(0);
+  await expect(page.getByTestId("tab-bookings")).toBeVisible();
   await expect(page.getByTestId("edit-item")).toHaveCount(0);
 
   const classic = page.locator('[data-testid=admin-item][data-code="J01"]');
