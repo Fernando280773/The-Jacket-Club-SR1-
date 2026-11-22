@@ -15,11 +15,11 @@ const menu: MenuJson = JSON.parse(readFileSync(path.resolve(__dirname, "../../da
 const UK_14 = ["Celery", "Gluten", "Crustaceans", "Eggs", "Fish", "Lupin", "Milk", "Molluscs", "Mustard", "Tree nuts", "Peanuts", "Sesame", "Soya", "Sulphites"];
 
 describe("menu data (snapshot of the Menu Sheet)", () => {
-  it("has all 52 items in 10 categories, 22 option groups and 80 options", () => {
-    expect(menu.items).toHaveLength(52);
-    expect(menu.categories).toHaveLength(10);
-    expect(menu.option_groups).toHaveLength(22);
-    expect(menu.options).toHaveLength(80);
+  it("has all 68 items in 13 categories, 26 option groups and 91 options", () => {
+    expect(menu.items).toHaveLength(68);
+    expect(menu.categories).toHaveLength(13);
+    expect(menu.option_groups).toHaveLength(26);
+    expect(menu.options).toHaveLength(91);
   });
 
   it("has unique item codes and whole-pence prices", () => {

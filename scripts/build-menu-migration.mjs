@@ -1,11 +1,15 @@
-// Turns data/menu.json (a snapshot of the Menu Sheet) into the menu seed migration.
-// Run: node scripts/build-menu-migration.mjs  (a unit test checks the committed file matches).
+// Turns data/menu.json (a snapshot of the Menu Sheet) into a menu sync migration.
+// Every statement inserts new rows and updates existing ones, so it can be re-run after each sheet change.
+// When the sheet changes: update data/menu.json, set MIGRATION_PATH to a new timestamped file, run
+//   node scripts/build-menu-migration.mjs
+// A unit test checks the newest menu migration matches data/menu.json.
+// (20261122070100_seed_menu.sql was the first load, made by an earlier insert-only version of this script.)
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const MIGRATION_PATH = path.join(root, "supabase/migrations/20261122070100_seed_menu.sql");
+export const MIGRATION_PATH = path.join(root, "supabase/migrations/20261122080000_sync_menu.sql");
 
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 const SHOP = "(select id from public.shops where slug = 'the-jacket-club-sr1')";
@@ -13,19 +17,22 @@ const SHOP = "(select id from public.shops where slug = 'the-jacket-club-sr1')";
 export function buildMenuSql(menu) {
   const out = [];
   out.push(`-- Menu seed generated from data/menu.json (${menu.source}).`);
-  out.push("-- Do not edit by hand: change data/menu.json and run node scripts/build-menu-migration.mjs.");
+  out.push("-- Do not edit by hand: change data/menu.json and run node scripts/build-menu-migration.mjs. Safe to re-run.");
   out.push("");
 
   out.push("insert into public.categories (shop_id, name, sort) values");
-  out.push(menu.categories.map((c, i) => `  (${SHOP}, ${q(c)}, ${(i + 1) * 10})`).join(",\n") + ";");
+  out.push(menu.categories.map((c, i) => `  (${SHOP}, ${q(c)}, ${(i + 1) * 10})`).join(",\n"));
+  out.push("on conflict (shop_id, name) do update set sort = excluded.sort;");
   out.push("");
 
   out.push("insert into public.option_groups (shop_id, code, name, is_required, min_choices, max_choices, control) values");
   out.push(
     menu.option_groups
       .map((g) => `  (${SHOP}, ${q(g.code)}, ${q(g.name)}, ${g.required}, ${g.min}, ${g.max}, ${q(g.control)})`)
-      .join(",\n") + ";",
+      .join(",\n"),
   );
+  out.push("on conflict (shop_id, code) do update set name = excluded.name, is_required = excluded.is_required,");
+  out.push("  min_choices = excluded.min_choices, max_choices = excluded.max_choices, control = excluded.control;");
   out.push("");
 
   const sortInGroup = {};
@@ -41,7 +48,8 @@ export function buildMenuSql(menu) {
   );
   out.push(") as v(code, name, pence, sort)");
   out.push(`cross join ${SHOP} as s(id)`);
-  out.push("join public.option_groups g on g.code = v.code and g.shop_id = s.id;");
+  out.push("join public.option_groups g on g.code = v.code and g.shop_id = s.id");
+  out.push("on conflict (group_id, name) do update set price_change_pence = excluded.price_change_pence, sort = excluded.sort;");
   out.push("");
 
   const sortInCat = {};
@@ -57,7 +65,10 @@ export function buildMenuSql(menu) {
       .join(",\n"),
   );
   out.push(") as v(category, code, name, description, pence, halal, available, featured, sort)");
-  out.push(`join public.categories c on c.name = v.category and c.shop_id = ${SHOP};`);
+  out.push(`join public.categories c on c.name = v.category and c.shop_id = ${SHOP}`);
+  out.push("on conflict (shop_id, code) do update set category_id = excluded.category_id, name = excluded.name,");
+  out.push("  description = excluded.description, price_pence = excluded.price_pence, is_halal = excluded.is_halal,");
+  out.push("  is_featured = excluded.is_featured, sort = excluded.sort;");
   out.push("");
 
   const links = menu.items.flatMap((it) => it.option_groups.map((g, i) => `  (${q(it.code)}, ${q(g)}, ${(i + 1) * 10})`));
@@ -66,7 +77,8 @@ export function buildMenuSql(menu) {
   out.push(links.join(",\n"));
   out.push(") as v(item_code, group_code, sort)");
   out.push(`join public.items i on i.code = v.item_code and i.shop_id = ${SHOP}`);
-  out.push("join public.option_groups g on g.code = v.group_code and g.shop_id = i.shop_id;");
+  out.push("join public.option_groups g on g.code = v.group_code and g.shop_id = i.shop_id");
+  out.push("on conflict (item_id, group_id) do update set sort = excluded.sort;");
   out.push("");
 
   const itemAllergens = menu.items.flatMap((it) => it.allergens.map((a) => `  (${q(it.code)}, ${q(a)})`));
@@ -75,7 +87,8 @@ export function buildMenuSql(menu) {
   out.push(itemAllergens.join(",\n"));
   out.push(") as v(item_code, allergen)");
   out.push(`join public.items i on i.code = v.item_code and i.shop_id = ${SHOP}`);
-  out.push("join public.allergens a on a.name = v.allergen;");
+  out.push("join public.allergens a on a.name = v.allergen");
+  out.push("on conflict do nothing;");
   out.push("");
 
   const optionAllergens = menu.options.flatMap((o) => o.allergens.map((a) => `  (${q(o.group)}, ${q(o.name)}, ${q(a)})`));
@@ -85,7 +98,8 @@ export function buildMenuSql(menu) {
   out.push(") as v(group_code, option_name, allergen)");
   out.push(`join public.option_groups g on g.code = v.group_code and g.shop_id = ${SHOP}`);
   out.push("join public.options o on o.group_id = g.id and o.name = v.option_name");
-  out.push("join public.allergens a on a.name = v.allergen;");
+  out.push("join public.allergens a on a.name = v.allergen");
+  out.push("on conflict do nothing;");
   out.push("");
   return out.join("\n");
 }

@@ -1,10 +1,13 @@
 {
-  "source": "The Jacket Club Menu Sheet, revision 9, read 22 Nov 2026",
+  "source": "The Jacket Club Menu Sheet, revision 10, read 22 Nov 2026 (Rice Boxes, Chicken, Paninis added from the Just Eat Menu sheet)",
   "categories": [
     "Jackets",
+    "Rice Boxes",
     "Smash Burgers",
     "Wraps",
+    "Chicken",
     "Sandwiches",
+    "Paninis",
     "Breakfast (all day)",
     "Sides",
     "Kids",
@@ -219,6 +222,116 @@
       ],
       "halal": true,
       "description": "Cheddar and creamy coleslaw",
+      "available": true
+    },
+    {
+      "code": "R01",
+      "category": "Rice Boxes",
+      "name": "Chicken Curry Rice Box",
+      "price_pence": 695,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Celery",
+        "Milk",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "A generous bed of basmati rice topped with mild halal chicken curry, fresh salad and a sauce drizzle",
+      "available": true
+    },
+    {
+      "code": "R02",
+      "category": "Rice Boxes",
+      "name": "Chilli Con Carne & Cheese Rice Box",
+      "price_pence": 695,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Celery",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Basmati rice topped with slow-cooked halal beef chilli, melted cheddar and fresh salad",
+      "available": true
+    },
+    {
+      "code": "R03",
+      "category": "Rice Boxes",
+      "name": "BBQ Chicken Rice Box",
+      "price_pence": 695,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Basmati rice topped with halal chicken in smoky BBQ sauce, fresh salad and garlic mayo",
+      "available": true
+    },
+    {
+      "code": "R04",
+      "category": "Rice Boxes",
+      "name": "Peri Peri Chicken Rice Box",
+      "price_pence": 695,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Basmati rice topped with halal peri peri chicken, fresh salad and peri mayo",
+      "available": true
+    },
+    {
+      "code": "R05",
+      "category": "Rice Boxes",
+      "name": "Crispy Chicken Strips Rice Box",
+      "price_pence": 725,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Gluten",
+        "Eggs",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Basmati rice topped with crispy halal chicken strips, fresh salad and sweet chilli or garlic mayo",
+      "available": true
+    },
+    {
+      "code": "R06",
+      "category": "Rice Boxes",
+      "name": "Veggie Chilli & Cheese Rice Box",
+      "price_pence": 650,
+      "option_groups": [
+        "G_RICEX",
+        "G_SAUCE",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Celery",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Basmati rice topped with three-bean vegetable chilli, melted cheddar and fresh salad",
       "available": true
     },
     {
@@ -438,6 +551,86 @@
       "available": true
     },
     {
+      "code": "H01",
+      "category": "Chicken",
+      "name": "Chicken Nuggets (6)",
+      "price_pence": 350,
+      "option_groups": [
+        "G_DIP",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Six golden halal chicken nuggets with a dip of your choice",
+      "available": true
+    },
+    {
+      "code": "H02",
+      "category": "Chicken",
+      "name": "Popcorn Chicken (Regular)",
+      "price_pence": 350,
+      "option_groups": [
+        "G_DIP",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Bite-size spicy halal popcorn chicken made from whole chicken fillet, with a dip",
+      "available": true
+    },
+    {
+      "code": "H03",
+      "category": "Chicken",
+      "name": "Crispy Chicken Strips (3)",
+      "price_pence": 425,
+      "option_groups": [
+        "G_DIP",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Three whole-muscle halal chicken strips in a crispy southern-fried coating, with a dip",
+      "available": true
+    },
+    {
+      "code": "H04",
+      "category": "Chicken",
+      "name": "Crispy Chicken Strips (5)",
+      "price_pence": 650,
+      "option_groups": [
+        "G_DIP",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "Five whole-muscle halal chicken strips in a crispy southern-fried coating, with a dip",
+      "available": true
+    },
+    {
+      "code": "H05",
+      "category": "Chicken",
+      "name": "Boneless Box",
+      "price_pence": 795,
+      "option_groups": [
+        "G_DIP",
+        "G_ADDCAN"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "3 crispy chicken strips, a regular popcorn chicken, skin-on fries and a dip",
+      "available": true
+    },
+    {
       "code": "S01",
       "category": "Sandwiches",
       "name": "Cheese & Pickle",
@@ -545,6 +738,79 @@
       ],
       "halal": true,
       "description": "Creamy mild curry chicken",
+      "available": true
+    },
+    {
+      "code": "P01",
+      "category": "Paninis",
+      "name": "Tuna Melt Panini",
+      "price_pence": 550,
+      "option_groups": [
+        "G_PANX",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Eggs",
+        "Mustard",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Tuna mayo with sweetcorn and melted cheddar, pressed in a golden 24cm Italian panini",
+      "available": true
+    },
+    {
+      "code": "P02",
+      "category": "Paninis",
+      "name": "Chicken Tikka & Cheese Panini",
+      "price_pence": 550,
+      "option_groups": [
+        "G_PANX",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Halal chicken tikka with melted cheddar and red onion, pressed in a golden 24cm panini",
+      "available": true
+    },
+    {
+      "code": "P03",
+      "category": "Paninis",
+      "name": "BBQ Chicken & Cheese Panini",
+      "price_pence": 550,
+      "option_groups": [
+        "G_PANX",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk",
+        "Mustard"
+      ],
+      "halal": true,
+      "description": "Halal chicken in smoky BBQ sauce with melted cheddar, pressed in a golden 24cm panini",
+      "available": true
+    },
+    {
+      "code": "P04",
+      "category": "Paninis",
+      "name": "Turkey Ham & Cheese Panini",
+      "price_pence": 550,
+      "option_groups": [
+        "G_PANX",
+        "G_BMEAL"
+      ],
+      "allergens": [
+        "Gluten",
+        "Milk"
+      ],
+      "halal": true,
+      "description": "Sliced halal turkey ham and mature cheddar, pressed in a golden 24cm panini",
       "available": true
     },
     {
@@ -773,6 +1039,22 @@
       ],
       "halal": true,
       "description": "Junior burger, small fries and a juice",
+      "available": true
+    },
+    {
+      "code": "K03",
+      "category": "Kids",
+      "name": "Kids Nugget Meal",
+      "price_pence": 495,
+      "option_groups": [
+        "G_DIP",
+        "G_JUICE"
+      ],
+      "allergens": [
+        "Gluten"
+      ],
+      "halal": true,
+      "description": "4 halal chicken nuggets, small fries and a fruit juice",
       "available": true
     },
     {
@@ -1123,6 +1405,38 @@
       "min": 1,
       "max": 1,
       "control": "pick_one"
+    },
+    {
+      "code": "G_RICEX",
+      "name": "Rice box extras",
+      "required": false,
+      "min": 0,
+      "max": 3,
+      "control": "tick_boxes"
+    },
+    {
+      "code": "G_ADDCAN",
+      "name": "Add a can",
+      "required": false,
+      "min": 0,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_DIP",
+      "name": "Choose your dip",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "control": "pick_one"
+    },
+    {
+      "code": "G_PANX",
+      "name": "Panini extras",
+      "required": false,
+      "min": 0,
+      "max": 2,
+      "control": "tick_boxes"
     }
   ],
   "options": [
@@ -1694,6 +2008,87 @@
       "group": "G_JUICE",
       "name": "Apple",
       "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_RICEX",
+      "name": "Add cheese",
+      "price_change_pence": 100,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_RICEX",
+      "name": "Add sour cream",
+      "price_change_pence": 80,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "group": "G_RICEX",
+      "name": "Half rice / half chips",
+      "price_change_pence": 100,
+      "allergens": []
+    },
+    {
+      "group": "G_ADDCAN",
+      "name": "Add a can",
+      "price_change_pence": 100,
+      "allergens": []
+    },
+    {
+      "group": "G_DIP",
+      "name": "Ketchup",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_DIP",
+      "name": "BBQ",
+      "price_change_pence": 0,
+      "allergens": [
+        "Mustard",
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_DIP",
+      "name": "Garlic mayo",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_DIP",
+      "name": "Sweet chilli",
+      "price_change_pence": 0,
+      "allergens": []
+    },
+    {
+      "group": "G_DIP",
+      "name": "Burger sauce",
+      "price_change_pence": 0,
+      "allergens": [
+        "Eggs",
+        "Mustard"
+      ]
+    },
+    {
+      "group": "G_PANX",
+      "name": "Add turkey bacon",
+      "price_change_pence": 120,
+      "allergens": [
+        "Sulphites"
+      ]
+    },
+    {
+      "group": "G_PANX",
+      "name": "Add tomato",
+      "price_change_pence": 30,
       "allergens": []
     }
   ]
