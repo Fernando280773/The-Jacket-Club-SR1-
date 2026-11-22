@@ -215,7 +215,6 @@ export function ItemSheet({ item }: { item: MenuItem }) {
               type="button"
               data-testid="add-to-basket"
               onClick={add}
-              aria-disabled={errors.length > 0}
               className={`flex-1 rounded-2xl px-4 py-3 font-bold text-club-paper ${errors.length > 0 ? "bg-club-green/40" : "bg-club-green"}`}
             >
               Add to basket · {formatPence(total)}
