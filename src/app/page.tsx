@@ -52,7 +52,7 @@ export default async function MenuPage() {
           <h2 id="favourites" className="font-display text-lg text-club-green">
             Club favourites
           </h2>
-          <div className="-mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
+          <div className="-mx-4 mt-3 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
             {menu.featured.map((item) => (
               <FavouriteCard key={item.code} item={item} />
             ))}
