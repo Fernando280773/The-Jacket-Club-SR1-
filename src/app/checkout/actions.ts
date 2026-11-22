@@ -36,7 +36,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
   if (Object.keys(fieldErrors).length > 0) return { ok: false, error: "Please check your details.", fieldErrors };
   const phone = normaliseUkMobile(details.phone)!;
 
-  const result = await getMenu();
+  const result = await getMenu({ fresh: true });
   if (!result.ok) return { ok: false, error: "The menu could not be loaded. Please try again." };
   const menu = result.menu;
   const basket = priceBasket(pricingMenuFrom(menu), parseLines(input.lines));
@@ -48,7 +48,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
   const { data: shop } = await db.from("shops").select("id, shop_settings(is_accepting_orders)").eq("slug", "the-jacket-club-sr1").single();
   if (!shop) return { ok: false, error: "Shop not found." };
   const settings = (Array.isArray(shop.shop_settings) ? shop.shop_settings[0] : shop.shop_settings) as { is_accepting_orders: boolean } | null;
-  if (!orderingOpen(now, settings?.is_accepting_orders ?? true)) return { ok: false, error: "We're not taking orders right now." };
+  if (!orderingOpen(now, settings?.is_accepting_orders ?? true)) return { ok: false, error: "We're not taking online orders right now. Please try again later." };
 
   let pickupAt: string | null = null;
   let tableId: string | null = null;

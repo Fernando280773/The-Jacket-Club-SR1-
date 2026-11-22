@@ -19,8 +19,10 @@ import {
   type KitchenOrder,
 } from "@/lib/kitchen";
 import { staffClient } from "@/lib/staff-client";
+import type { Staff } from "@/components/StaffGate";
 
-export type Staff = { shopId: string; name: string; role: string };
+export type { Staff };
+
 
 /** Backup check even when live updates are working, so nothing is ever missed. */
 export const KITCHEN_POLL_MS = 20_000;
@@ -172,6 +174,9 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
           <span data-testid="kitchen-connection" className={`rounded-full px-3 py-1 font-bold ${live ? "bg-club-mint text-club-green" : "bg-red-600 text-white"}`}>
             {live ? "Live" : "Reconnecting…"}
           </span>
+          <a href="/admin?tab=stock" data-testid="sold-out-link" className="rounded-xl bg-club-butter px-3 py-1.5 font-bold text-club-ink">
+            Sold out
+          </a>
           <span>{staff.name}</span>
           <span className="text-club-ink">{signOut}</span>
         </div>

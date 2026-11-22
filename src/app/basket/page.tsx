@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Your basket · The Jacket Club SR1" };
 
 export default async function BasketPage() {
-  const result = await getMenu();
+  const result = await getMenu({ fresh: true });
   if (!result.ok && process.env.NEXT_PHASE !== "phase-production-build") throw new Error(result.error);
   if (!result.ok) return <main className="p-4">Sorry, the basket could not be loaded right now.</main>;
 
@@ -22,7 +22,7 @@ export default async function BasketPage() {
           </Link>
           <h1 className="font-display text-2xl text-club-green">Your basket</h1>
         </header>
-        <BasketView canOrder={orderingOpen(new Date())} />
+        <BasketView canOrder={orderingOpen(new Date(), result.menu.acceptingOrders)} paused={!result.menu.acceptingOrders} pausedMessage={result.menu.pausedMessage} />
       </main>
     </BasketProvider>
   );
