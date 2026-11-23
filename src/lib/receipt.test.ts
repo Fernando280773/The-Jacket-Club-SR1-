@@ -23,10 +23,12 @@ describe("receipt email", () => {
     expect(r.text).toContain("Collect from 12–14 Park Lane at 12:30");
     expect(r.html).toContain("https://example.com/order/abc");
   });
-  it("includes VAT and company details", () => {
+  it("includes the company details and makes no VAT claim (not VAT registered)", () => {
     const r = buildReceipt(order, "x");
-    expect(r.text).toContain("Prices include VAT.");
-    expect(r.text).toContain("Fernando & Sons Property Ltd trading as The Jacket Club SR1");
+    expect(r.text).not.toMatch(/VAT/);
+    expect(r.html).not.toMatch(/VAT/);
+    expect(r.text).toContain("trading name of Fernando & Sons Property Limited");
+    expect(r.text).toContain("company number 15466129");
   });
   it("escapes customer text in the HTML", () => {
     const r = buildReceipt(order, "x");

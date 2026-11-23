@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import type { StartTime } from "@/lib/bookings";
+import { AgreeLine } from "@/components/AgreeLine";
 import { formatPence } from "@/lib/money";
 import { bookingTimes, startBooking } from "./actions";
 
@@ -144,6 +145,7 @@ export function BookingForm({ dates, maxParty, depositPerPersonPence }: { dates:
         {busy ? "Opening secure payment…" : `Pay ${formatPence(deposit)} deposit`}
       </button>
       <p className="text-center text-xs text-club-muted">Secure payment by Stripe. The deposit comes off your bill.</p>
+      <AgreeLine booking />
     </form>
   );
 }

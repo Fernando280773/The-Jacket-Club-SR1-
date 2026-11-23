@@ -22,9 +22,16 @@ export default async function AllergensPage() {
       <h1 className="mt-3 font-display text-2xl text-club-green">Allergen information</h1>
       <p className="mt-2 max-w-2xl text-sm text-club-muted">
         The 14 allergens UK law requires us to declare, for every item on our menu. Extras and sauces you add can contain
-        others, and we cook in one kitchen, so we cannot promise any item is free from traces. Please speak to staff before
-        ordering if you have an allergy.
+        others: each item&apos;s pop-up shows the allergens for exactly what you choose.
       </p>
+      <div data-testid="allergen-warning" className="mt-3 max-w-2xl rounded-xl bg-club-butter/40 px-4 py-3 text-sm">
+        <p className="font-bold">If you have a food allergy or intolerance, please speak to a member of staff before you order.</p>
+        <p className="mt-1">
+          We prepare all our food in one kitchen, using shared equipment and fryers. Although we take care, we can&apos;t guarantee
+          that any item is free from allergens, including traces of nuts, sesame, gluten or milk. Our suppliers&apos; recipes can
+          change, so we check labels regularly and update this table.
+        </p>
+      </div>
 
       <div className="mt-4 overflow-x-auto rounded-xl border border-club-line">
         <table data-testid="allergen-table" className="min-w-max border-collapse text-xs">
