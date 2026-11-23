@@ -2,7 +2,7 @@
 
 import { ORDER_TYPES, useBasket } from "./BasketProvider";
 
-/** How the customer wants their order. Remembered with the basket; checkout uses it from Step 7. */
+/** How the customer wants their order. Remembered with the basket; "Book" opens table booking. */
 export function OrderTypes() {
   const basket = useBasket();
   const chosen = basket?.orderType ?? "collect";
@@ -14,7 +14,7 @@ export function OrderTypes() {
           type="button"
           role="radio"
           aria-checked={chosen === t.key}
-          onClick={() => basket?.setOrderType(t.key)}
+          onClick={() => (t.key === "book" ? (window.location.href = "/book") : basket?.setOrderType(t.key))}
           className={`rounded-xl py-2 text-sm font-bold transition-colors ${chosen === t.key ? "bg-club-green text-club-paper" : "text-club-ink"}`}
         >
           {t.label}

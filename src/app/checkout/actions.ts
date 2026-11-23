@@ -10,6 +10,7 @@ import { pickupSlots } from "@/lib/slots";
 import { adminClient } from "@/lib/server/admin";
 import { orderingOpen } from "@/lib/server/ordering";
 import { paymentsConfigured, stripe } from "@/lib/server/stripe";
+import { depositForTable } from "@/lib/server/bookings";
 import { tableForToken } from "@/lib/server/tables";
 
 export type StartCheckoutInput = {
@@ -53,6 +54,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
   let pickupAt: string | null = null;
   let tableId: string | null = null;
   let tableNumber = "";
+  let deposit: { bookingId: string; creditPence: number } | null = null;
   if (input.orderType === "collect") {
     const slot = pickupSlots(menu.hours, now).find((s) => s.iso === input.pickupAt);
     if (!slot) return { ok: false, error: "Please choose a collection time.", fieldErrors: { pickupAt: "Please choose a collection time" } };
@@ -63,6 +65,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     if (!getOpenStatus(menu.hours, now).isOpen) return { ok: false, error: "We're closed right now, so we can't take table orders." };
     tableId = table.id;
     tableNumber = String(table.number);
+    deposit = await depositForTable(table.id, basket.subtotalPence, now).catch(() => null);
   } else {
     return { ok: false, error: "Delivery and table booking are coming soon. Please choose Collect or Table." };
   }
@@ -102,9 +105,16 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     name: details.name.trim(),
     phone,
     email: details.email.trim(),
+    deposit_booking_id: deposit?.bookingId ?? "",
+    deposit_credit_pence: deposit ? String(deposit.creditPence) : "",
   };
   try {
+    // A table booking's deposit comes off once, as a one-off Stripe discount.
+    const coupon = deposit
+      ? await stripe().coupons.create({ amount_off: deposit.creditPence, currency: "gbp", duration: "once", max_redemptions: 1, name: "Booking deposit" })
+      : null;
     const session = await stripe().checkout.sessions.create({
+      ...(coupon ? { discounts: [{ coupon: coupon.id }] } : {}),
       mode: "payment",
       line_items: stripeLineItems(basket),
       customer_email: metadata.email || undefined,
@@ -119,5 +129,19 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     return { ok: true, url: session.url };
   } catch {
     return { ok: false, error: "Could not open the payment page. Please try again." };
+  }
+}
+
+/** The booking deposit that would come off a table order now, so checkout can show it before paying. */
+export async function tableDepositPreview(tableToken: string, lines: unknown): Promise<number> {
+  try {
+    const table = await tableForToken(String(tableToken));
+    if (!table) return 0;
+    const result = await getMenu({ fresh: true });
+    if (!result.ok) return 0;
+    const basket = priceBasket(pricingMenuFrom(result.menu), parseLines(lines));
+    return (await depositForTable(table.id, basket.subtotalPence))?.creditPence ?? 0;
+  } catch {
+    return 0;
   }
 }

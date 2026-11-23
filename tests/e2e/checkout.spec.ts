@@ -24,6 +24,8 @@ test("basket goes to checkout with the server total and collection times", async
 test("checkout checks name and UK mobile before payment", async ({ page }) => {
   await addClassic(page);
   await page.getByTestId("go-to-checkout").click();
+  // Wait until the page has priced the basket and worked out today's collection times.
+  await expect(page.getByTestId("checkout-total")).toHaveText("£5.50");
   test.skip(await page.getByTestId("collection-closed").isVisible(), "collection closed at this time of day");
   await page.getByLabel("Name").fill("A");
   await page.getByLabel("Mobile number").fill("0191 123 4567");

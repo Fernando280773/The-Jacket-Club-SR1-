@@ -5,6 +5,8 @@ export type ReceiptOrder = {
   type: "collect" | "table" | "delivery";
   pickup_at: string | null;
   total_pence: number;
+  /** Booking deposit taken off this order, if any. */
+  deposit_credit_pence?: number;
   created_at: string;
   customer_name: string | null;
   dining_tables: { number: number } | null;
@@ -44,6 +46,7 @@ export function buildReceipt(o: ReceiptOrder, statusUrl: string) {
 ${where ? `<tr><td style="padding-top:6px;font-size:16px">${esc(where)}</td></tr>` : ""}
 <tr><td style="padding-top:16px"><a href="${esc(statusUrl)}" style="display:inline-block;background:#1f4a2c;color:#fbf6ea;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:12px">Track your order</a></td></tr>
 <tr><td style="padding-top:20px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px">${rows}
+${o.deposit_credit_pence ? `<tr><td style="padding-top:12px;color:#1f4a2c">Booking deposit</td><td style="padding-top:12px;text-align:right;color:#1f4a2c">−${formatPence(o.deposit_credit_pence)}</td></tr>` : ""}
 <tr><td style="padding-top:12px;font-size:17px"><strong>Total paid</strong></td><td style="padding-top:12px;text-align:right;font-size:17px"><strong>${formatPence(o.total_pence)}</strong></td></tr></table></td></tr>
 <tr><td style="padding-top:20px;font-size:12px;color:#6b5a48">Ordered ${esc(ukDate(o.created_at))}. Prices include VAT. 100% halal.<br>${esc(COMPANY_LINE)}<br>Questions? Reply to this email or contact info@thejacketclubsr1.com</td></tr>
 </table></td></tr></table></body></html>`;
@@ -56,6 +59,7 @@ ${where ? `<tr><td style="padding-top:6px;font-size:16px">${esc(where)}</td></tr
       return `${l.quantity} x ${l.item_name}${opts ? ` (${opts})` : ""}: ${formatPence(l.line_total_pence)}`;
     }),
     "",
+    ...(o.deposit_credit_pence ? [`Booking deposit: -${formatPence(o.deposit_credit_pence)}`] : []),
     `Total paid: ${formatPence(o.total_pence)}`,
     `Track your order: ${statusUrl}`,
     "",

@@ -7,7 +7,7 @@ import type { PricedBasket } from "@/lib/pricing";
 import type { Slot } from "@/lib/slots";
 import { useBasket } from "@/components/BasketProvider";
 import { priceBasketOnServer } from "../basket/actions";
-import { startCheckout } from "./actions";
+import { startCheckout, tableDepositPreview } from "./actions";
 
 const inputClass = "w-full rounded-xl border border-club-line bg-white px-4 py-3 text-base outline-none focus:border-club-green";
 
@@ -37,12 +37,22 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [credit, setCredit] = useState(0);
 
   const lines = basket?.lines;
   useEffect(() => {
     if (!basket?.ready || !lines) return;
     priceBasketOnServer(lines).then((r) => r.ok && setPriced(r.basket));
   }, [basket?.ready, lines]);
+
+  const tableToken = basket?.orderType === "table" ? basket.table?.token : undefined;
+  useEffect(() => {
+    if (!tableToken || !lines) {
+      setCredit(0);
+      return;
+    }
+    tableDepositPreview(tableToken, lines).then(setCredit);
+  }, [tableToken, lines]);
 
   useEffect(() => {
     if (!pickupAt && slots[0]) setPickupAt(slots[0].iso);
@@ -96,9 +106,15 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
             </li>
           ))}
         </ul>
+        {credit > 0 && (
+          <div data-testid="deposit-credit" className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold text-club-green">
+            <span>Booking deposit</span>
+            <span>−{formatPence(credit)}</span>
+          </div>
+        )}
         <div className="mt-3 flex justify-between border-t border-club-line pt-3 font-bold">
           <span>Total</span>
-          <span data-testid="checkout-total">{priced ? formatPence(priced.subtotalPence) : "…"}</span>
+          <span data-testid="checkout-total">{priced ? formatPence(priced.subtotalPence - credit) : "…"}</span>
         </div>
         <Link href="/basket" className="mt-2 inline-block text-sm font-bold text-club-green underline">
           Edit basket
@@ -120,7 +136,11 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
         {noSlots && <p data-testid="collection-closed" className="rounded-xl bg-club-cream px-4 py-3 font-bold">Collection is closed for today. Please come back tomorrow.</p>}
         {type === "table" && basket.table && <p data-testid="table-number" className="rounded-xl bg-club-mint px-4 py-3 font-bold text-club-green">Table {basket.table.number}: we&apos;ll bring your order to you.</p>}
         {needsTable && <p className="rounded-xl bg-club-cream px-4 py-3 font-bold">Please scan the QR code on your table to order to it, or choose Collect.</p>}
-        {unsupported && <p className="rounded-xl bg-club-cream px-4 py-3 font-bold">{type === "delivery" ? "Delivery" : "Table booking"} is coming soon. Please choose Collect or Table in your basket.</p>}
+        {unsupported && (
+          <p className="rounded-xl bg-club-cream px-4 py-3 font-bold">
+            {type === "delivery" ? "Delivery is coming soon. Please choose Collect or Table in your basket." : <>To book a table, use <Link href="/book" className="underline">Book a table</Link>. To order now, choose Collect or Table.</>}
+          </p>
+        )}
       </section>
 
       <section aria-label="Your details" className="flex flex-col gap-3">
@@ -147,7 +167,7 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
         disabled={busy || unsupported || needsTable || noSlots || !priced?.isValid}
         className="rounded-2xl bg-club-green px-5 py-4 font-bold text-club-paper disabled:bg-club-green/40"
       >
-        {busy ? "Opening secure payment…" : `Pay ${priced ? formatPence(priced.subtotalPence) : ""}`}
+        {busy ? "Opening secure payment…" : `Pay ${priced ? formatPence(priced.subtotalPence - credit) : ""}`}
       </button>
       <p className="text-center text-xs text-club-muted">Secure payment by Stripe: card, Apple Pay or Google Pay.</p>
     </form>

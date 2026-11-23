@@ -19,6 +19,8 @@ import {
   type KitchenOrder,
 } from "@/lib/kitchen";
 import { staffClient } from "@/lib/staff-client";
+import { STAFF_BOOKING_SELECT, tableNumbers, type StaffBooking } from "@/app/admin/BookingsTab";
+import { tablesText } from "@/lib/booking-email";
 import type { Staff } from "@/components/StaffGate";
 
 export type { Staff };
@@ -59,6 +61,28 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
   const seen = useRef<Set<string> | null>(null);
   const audio = useRef<AudioContext | null>(null);
   const wakeLock = useRef<{ release: () => Promise<void> } | null>(null);
+
+  const [bookings, setBookings] = useState<StaffBooking[]>([]);
+
+  // Today's remaining bookings, so walk-ins aren't seated at booked tables.
+  useEffect(() => {
+    const loadBookings = async () => {
+      const now = new Date();
+      const endOfDay = new Date(new Date(ukMidnight(now)).getTime() + 86_400_000).toISOString();
+      const { data } = await staffClient()
+        .from("bookings")
+        .select(STAFF_BOOKING_SELECT)
+        .eq("shop_id", staff.shopId)
+        .eq("status", "confirmed")
+        .gt("ends_at", now.toISOString())
+        .lt("starts_at", endOfDay)
+        .order("starts_at");
+      setBookings((data ?? []) as unknown as StaffBooking[]);
+    };
+    loadBookings();
+    const t = setInterval(loadBookings, 60_000);
+    return () => clearInterval(t);
+  }, [staff.shopId]);
 
   const load = useCallback(async () => {
     const { data, error } = await staffClient()
@@ -174,6 +198,9 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
           <span data-testid="kitchen-connection" className={`rounded-full px-3 py-1 font-bold ${live ? "bg-club-mint text-club-green" : "bg-red-600 text-white"}`}>
             {live ? "Live" : "Reconnecting…"}
           </span>
+          <a href="/admin?tab=bookings" data-testid="bookings-link" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
+            Bookings
+          </a>
           <a href="/admin?tab=stock" data-testid="sold-out-link" className="rounded-xl bg-club-butter px-3 py-1.5 font-bold text-club-ink">
             Sold out
           </a>
@@ -199,6 +226,17 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
         <p role="status" className="bg-club-cream px-4 py-2 text-center font-bold">
           {message}
         </p>
+      )}
+
+      {bookings.length > 0 && (
+        <section aria-label="Bookings today" data-testid="bookings-strip" className="flex gap-2 overflow-x-auto bg-club-mint px-3 py-2 text-sm">
+          <span className="shrink-0 py-1 font-bold text-club-green">Booked today:</span>
+          {bookings.slice(0, 6).map((b) => (
+            <span key={b.id} className="shrink-0 rounded-full bg-white px-3 py-1 font-bold">
+              {ukTime(b.starts_at)} · {b.customer_name?.split(" ")[0] ?? "Booking"} · {b.party_size} · {tablesText(tableNumbers(b))}
+            </span>
+          ))}
+        </section>
       )}
 
       <div className="grid flex-1 grid-cols-1 gap-3 p-3 md:grid-cols-3">
