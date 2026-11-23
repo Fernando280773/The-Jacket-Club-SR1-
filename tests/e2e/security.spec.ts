@@ -26,3 +26,15 @@ test("the staff APIs refuse a request with no login", async ({ request }) => {
   const forged = { Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4In0.forged" };
   expect((await request.post("/api/admin/refresh", { headers: forged })).status()).toBe(401);
 });
+
+test("staff test mode needs an owner login", async ({ request }) => {
+  expect((await request.post("/api/staff/test-mode")).status()).toBe(401);
+  expect((await request.post("/api/staff/test-mode", { headers: { Authorization: "Bearer forged.token.x" } })).status()).toBe(401);
+  // A forged cookie does not turn it on either.
+  const res = await request.get("/api/staff/test-mode", { headers: { Cookie: "jc_staff_test=forged.token.x" } });
+  expect(await res.json()).toEqual({ on: false });
+});
+
+test("the test error alert needs an owner login", async ({ request }) => {
+  expect((await request.post("/api/staff/sentry-test")).status()).toBe(401);
+});

@@ -35,6 +35,7 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
     if (error) return { ok: false, reason: "error", message: error.message };
     const row = (Array.isArray(data) ? data[0] : data) as { order_id: string; order_number: number; created: boolean } | undefined;
     if (!row) return { ok: false, reason: "error", message: "Order was not created" };
+    if (m.staff_test === "1" && row.created) await adminClient().from("orders").update({ is_staff_test: true }).eq("id", row.order_id);
     return { ok: true, orderId: row.order_id, orderNumber: row.order_number, created: row.created };
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : String(e) };

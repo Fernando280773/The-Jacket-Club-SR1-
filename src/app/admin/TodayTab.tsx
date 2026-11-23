@@ -7,6 +7,7 @@ import { ukMidnight, ukTime } from "@/lib/kitchen";
 import { formatPence } from "@/lib/money";
 import { staffClient } from "@/lib/staff-client";
 import { friendlyError, refreshMenu } from "./refresh";
+import { StaffTestMode } from "./StaffTestMode";
 
 const STATUS_WORDS: Record<string, string> = {
   received: "New",
@@ -105,6 +106,8 @@ export function TodayTab({ staff }: { staff: Staff }) {
           </p>
         )}
       </section>
+
+      <StaffTestMode />
 
       <section aria-label="Today's orders">
         <h2 className="mb-2 font-display text-lg text-club-green">Today&apos;s orders</h2>

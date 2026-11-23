@@ -6,6 +6,7 @@ import { checkDetails, normaliseUkMobile } from "@/lib/checkout";
 import { adminClient } from "@/lib/server/admin";
 import { cancelByCustomer, freeStartTimes, holdTables } from "@/lib/server/bookings";
 import { orderingOpen } from "@/lib/server/ordering";
+import { staffTestActive } from "@/lib/server/staff-test";
 import { paymentsConfigured, stripe } from "@/lib/server/stripe";
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -25,7 +26,7 @@ export type StartBookingResult = { ok: true; url: string } | { ok: false; error:
 
 /** Holds the tables, then opens Stripe's page for the deposit. The booking is confirmed only when Stripe says it's paid. */
 export async function startBooking(input: StartBookingInput): Promise<StartBookingResult> {
-  if (!orderingOpen(new Date())) return { ok: false, error: "Bookings open on 10 December." };
+  if (!orderingOpen(new Date(), true, await staffTestActive())) return { ok: false, error: "Bookings open on 10 December." };
   const details = { name: String(input.name ?? ""), phone: String(input.phone ?? ""), email: String(input.email ?? "") };
   const fieldErrors = checkDetails(details);
   if (!details.email.trim()) fieldErrors.email = "Please enter your email for your booking confirmation";

@@ -352,6 +352,7 @@ function OrderCard({
           <p className="font-display text-2xl leading-none text-club-green">#{o.number}</p>
           <p className="mt-1 text-xl font-bold">{whereLabel(o)}</p>
           {o.customer_name && <p className="text-sm text-club-muted">{firstName(o.customer_name)}</p>}
+          {o.is_staff_test && <p data-testid="staff-test-badge" className="mt-1 inline-block rounded bg-club-ink px-2 py-0.5 text-xs font-bold text-white">STAFF TEST</p>}
         </div>
         <span className={`rounded-full px-2 py-1 text-xs font-bold ${level === "red" ? "bg-red-600 text-white" : level === "amber" ? "bg-amber-400" : "bg-club-mint text-club-green"}`}>{mins} min</span>
       </div>

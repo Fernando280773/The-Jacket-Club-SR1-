@@ -4,6 +4,7 @@ import { bookingDates } from "@/lib/bookings";
 import { formatPence } from "@/lib/money";
 import { bookingContext } from "@/lib/server/bookings";
 import { orderingOpen } from "@/lib/server/ordering";
+import { staffTestActive } from "@/lib/server/staff-test";
 import { BookingForm } from "./BookingForm";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
   const { cancelled } = await searchParams;
   const ctx = await bookingContext();
   const now = new Date();
+  const staffTest = await staffTestActive();
   const { rules } = ctx;
 
   return (
@@ -32,7 +34,7 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
           Payment cancelled. You haven&apos;t been charged and nothing is booked.
         </p>
       )}
-      {orderingOpen(now) ? (
+      {orderingOpen(now, true, staffTest) ? (
         <BookingForm dates={bookingDates(now, rules.daysAhead)} maxParty={rules.maxParty} depositPerPersonPence={rules.depositPerPersonPence} />
       ) : (
         <p className="py-8 text-center font-bold">Bookings open on 10 December.</p>
