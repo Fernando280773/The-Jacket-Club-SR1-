@@ -9,6 +9,7 @@ import { parseLines, priceBasket, pricingMenuFrom } from "@/lib/pricing";
 import { pickupSlots } from "@/lib/slots";
 import { adminClient } from "@/lib/server/admin";
 import { orderingOpen } from "@/lib/server/ordering";
+import { staffTestActive } from "@/lib/server/staff-test";
 import { paymentsConfigured, stripe } from "@/lib/server/stripe";
 import { deliverySlots, milesText } from "@/lib/delivery";
 import { depositForTable } from "@/lib/server/bookings";
@@ -36,7 +37,8 @@ export type StartCheckoutResult = { ok: true; url: string } | { ok: false; error
  */
 export async function startCheckout(input: StartCheckoutInput): Promise<StartCheckoutResult> {
   const now = new Date();
-  if (!orderingOpen(now)) return { ok: false, error: "Ordering opens on 10 December." };
+  const staffTest = await staffTestActive();
+  if (!orderingOpen(now, true, staffTest)) return { ok: false, error: "Ordering opens on 10 December." };
   const details = { name: String(input.name ?? ""), phone: String(input.phone ?? ""), email: String(input.email ?? "") };
   const fieldErrors = checkDetails(details);
   if (Object.keys(fieldErrors).length > 0) return { ok: false, error: "Please check your details.", fieldErrors };
@@ -54,7 +56,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
   const { data: shop } = await db.from("shops").select("id, shop_settings(is_accepting_orders)").eq("slug", "the-jacket-club-sr1").single();
   if (!shop) return { ok: false, error: "Shop not found." };
   const settings = (Array.isArray(shop.shop_settings) ? shop.shop_settings[0] : shop.shop_settings) as { is_accepting_orders: boolean } | null;
-  if (!orderingOpen(now, settings?.is_accepting_orders ?? true)) return { ok: false, error: "We're not taking online orders right now. Please try again later." };
+  if (!orderingOpen(now, settings?.is_accepting_orders ?? true, staffTest)) return { ok: false, error: "We're not taking online orders right now. Please try again later." };
 
   let pickupAt: string | null = null;
   let tableId: string | null = null;
@@ -145,6 +147,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     email: details.email.trim(),
     deposit_booking_id: deposit?.bookingId ?? "",
     deposit_credit_pence: deposit ? String(deposit.creditPence) : "",
+    staff_test: staffTest ? "1" : "",
   };
   try {
     // A table booking's deposit comes off once, as a one-off Stripe discount.
@@ -163,7 +166,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
       customer_email: metadata.email || undefined,
       client_reference_id: savedBasket.id,
       metadata,
-      payment_intent_data: { metadata: { basket_id: savedBasket.id }, description: "The Jacket Club SR1 order" },
+      payment_intent_data: { metadata: { basket_id: savedBasket.id }, description: staffTest ? "The Jacket Club SR1 order (STAFF TEST)" : "The Jacket Club SR1 order" },
       success_url: `${origin}/order/confirmed?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout?cancelled=1`,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,

@@ -96,3 +96,24 @@ test("owner can pause ordering with a message", async ({ page }) => {
   await expect(page.getByTestId("toggle-ordering")).toHaveText("Start taking orders");
   expect(rpc).toContainEqual({ name: "admin_set_ordering", body: { p_shop_id: SHOP_ID, p_accepting: false, p_message: "Back at 2pm" } });
 });
+
+test("owner prints a QR card for the counter and every table", async ({ page }) => {
+  await fakeAdmin(page, "owner");
+  const tables = Array.from({ length: 15 }, (_, i) => ({ number: i + 1, token: `abc${String(i + 1).padStart(4, "0")}def00000` }));
+  await page.route("**/api/staff/tables", (r) => r.fulfill({ json: { ok: true, tables } }));
+  await page.goto("/admin?tab=qr");
+  await expect(page.getByTestId("qr-counter")).toHaveAttribute("data-url", /\/$/);
+  for (const t of tables) {
+    const card = page.getByTestId(`qr-table-${t.number}`);
+    await expect(card).toContainText(`Table ${t.number}`);
+    await expect(card).toHaveAttribute("data-url", new RegExp(`/t/${t.token}$`));
+    await expect(card.locator("svg")).toHaveCount(1);
+  }
+});
+
+test("kitchen staff do not get the QR codes or staff test mode", async ({ page }) => {
+  await fakeAdmin(page, "kitchen");
+  await page.goto("/admin?tab=qr");
+  await expect(page.getByTestId("tab-qr")).toHaveCount(0);
+  await expect(page.getByTestId("toggle-staff-test")).toHaveCount(0);
+});

@@ -11,13 +11,14 @@ export type KitchenOrder = {
   updated_at: string;
   customer_name: string | null;
   note: string | null;
+  is_staff_test?: boolean;
   dining_tables: { number: number } | null;
   deliveries: { address_text: string; postcode: string; note: string | null; distance_miles: number; driver_assignments: { driver_id: string }[] } | null;
   order_lines: { id: string; item_name: string; quantity: number; order_line_options: { option_name: string; count: number }[] }[];
 };
 
 export const KITCHEN_SELECT =
-  "id, number, type, status, pickup_at, created_at, updated_at, customer_name, note, dining_tables(number), deliveries(address_text, postcode, note, distance_miles, driver_assignments(driver_id)), order_lines(id, item_name, quantity, order_line_options(option_name, count))";
+  "id, number, type, status, pickup_at, created_at, updated_at, customer_name, note, is_staff_test, dining_tables(number), deliveries(address_text, postcode, note, distance_miles, driver_assignments(driver_id)), order_lines(id, item_name, quantity, order_line_options(option_name, count))";
 
 export type Column = "new" | "preparing" | "ready" | "done";
 

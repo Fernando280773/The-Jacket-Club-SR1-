@@ -3,9 +3,8 @@ import { adminClient } from "./admin";
 
 export type StaffCaller = { authUserId: string; shopId: string; name: string; role: "owner" | "kitchen" | "driver" };
 
-/** The signed-in staff member behind a request's Bearer token, or null. */
-export async function staffFromRequest(req: Request, roles: StaffCaller["role"][]): Promise<StaffCaller | null> {
-  const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+/** The active staff member a Supabase access token belongs to, or null. */
+export async function staffFromToken(token: string | null | undefined, roles: StaffCaller["role"][]): Promise<StaffCaller | null> {
   if (!token) return null;
   try {
     const db = adminClient();
@@ -17,4 +16,9 @@ export async function staffFromRequest(req: Request, roles: StaffCaller["role"][
   } catch {
     return null;
   }
+}
+
+/** The signed-in staff member behind a request's Bearer token, or null. */
+export async function staffFromRequest(req: Request, roles: StaffCaller["role"][]): Promise<StaffCaller | null> {
+  return staffFromToken(req.headers.get("authorization")?.replace(/^Bearer\s+/i, ""), roles);
 }

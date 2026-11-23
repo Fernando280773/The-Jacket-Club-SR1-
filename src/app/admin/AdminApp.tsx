@@ -6,14 +6,16 @@ import { BookingsTab } from "./BookingsTab";
 import { HoursTab } from "./HoursTab";
 import { MenuTab } from "./MenuTab";
 import { TodayTab } from "./TodayTab";
+import { QrTab } from "./QrTab";
 
-type Tab = "today" | "menu" | "bookings" | "hours" | "stock";
+type Tab = "today" | "menu" | "bookings" | "hours" | "stock" | "qr";
 
 const OWNER_TABS: { id: Tab; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "menu", label: "Menu" },
   { id: "bookings", label: "Bookings" },
   { id: "hours", label: "Opening hours" },
+  { id: "qr", label: "QR codes" },
 ];
 const KITCHEN_TABS: { id: Tab; label: string }[] = [
   { id: "stock", label: "Sold out" },
@@ -48,7 +50,7 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-3 bg-club-green px-4 py-3 text-club-paper">
+      <header className="print:hidden flex flex-wrap items-center justify-between gap-3 bg-club-green px-4 py-3 text-club-paper">
         <h1 className="font-display text-xl">{isOwner ? "Admin" : "Kitchen admin"}</h1>
         <div className="flex items-center gap-3 text-sm">
           <a href="/kitchen" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
@@ -59,7 +61,7 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
         </div>
       </header>
       {(
-        <nav aria-label="Admin sections" className="flex gap-2 overflow-x-auto border-b border-club-line px-4 py-2">
+        <nav aria-label="Admin sections" className="print:hidden flex gap-2 overflow-x-auto border-b border-club-line px-4 py-2">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -76,6 +78,7 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
       )}
       <div className="flex-1 px-4 py-4">
         {tab === "today" && isOwner && <TodayTab staff={staff} />}
+        {tab === "qr" && isOwner && <QrTab />}
         {tab === "menu" && isOwner && <MenuTab staff={staff} mode="owner" />}
         {tab === "hours" && isOwner && <HoursTab staff={staff} />}
         {tab === "bookings" && <BookingsTab staff={staff} />}
