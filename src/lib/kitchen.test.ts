@@ -12,6 +12,7 @@ const order = (n: number, status: KitchenOrder["status"], extra: Partial<Kitchen
   customer_name: "Sam Smith",
   note: null,
   dining_tables: null,
+  deliveries: null,
   order_lines: [],
   ...extra,
 });
@@ -57,6 +58,7 @@ describe("board", () => {
     expect(whereLabel({ type: "table", pickup_at: null, dining_tables: { number: 7 } })).toBe("Table 7");
     expect(whereLabel({ type: "collect", pickup_at: "2026-11-22T12:15:00Z", dining_tables: null })).toBe("Collect 12:15");
     expect(whereLabel({ type: "collect", pickup_at: "2026-07-01T12:15:00Z", dining_tables: null })).toBe("Collect 13:15");
+    expect(whereLabel({ type: "delivery", pickup_at: "2026-11-22T18:45:00Z", dining_tables: null })).toBe("Delivery 18:45");
   });
   it("turns amber at 10 minutes and red at 15", () => {
     const now = new Date("2026-11-22T12:20:00Z");

@@ -32,12 +32,18 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ to
     <main className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8">
       <RememberOrder token={order.access_token} number={order.number} />
       <div className="text-center">
-        <p className="text-sm font-bold text-club-muted">Show this number when you collect</p>
+        <p className="text-sm font-bold text-club-muted">{order.type === "delivery" ? "Your order number" : "Show this number when you collect"}</p>
         <h1 data-testid="tracked-order-number" className="font-display text-5xl text-club-green">
           #{order.number}
         </h1>
         {order.type === "collect" && order.pickup_at && <p className="mt-2 text-lg font-bold">Collect from 12–14 Park Lane at {ukTime(order.pickup_at)}</p>}
         {order.type === "table" && order.dining_tables && <p className="mt-2 text-lg font-bold">Table {order.dining_tables.number}</p>}
+        {order.type === "delivery" && order.deliveries && (
+          <p className="mt-2 text-lg font-bold">
+            Delivering to {order.deliveries.address_text}
+            {order.pickup_at ? ` at ${ukTime(order.pickup_at)}` : ""}
+          </p>
+        )}
       </div>
 
       <OrderProgress token={order.access_token} type={order.type} initialStatus={order.status} />
@@ -58,6 +64,12 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ to
             </li>
           ))}
         </ul>
+        {order.delivery_fee_pence > 0 && (
+          <div className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold">
+            <span>Delivery</span>
+            <span>{formatPence(order.delivery_fee_pence)}</span>
+          </div>
+        )}
         {order.deposit_credit_pence > 0 && (
           <div className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold text-club-green">
             <span>Booking deposit</span>

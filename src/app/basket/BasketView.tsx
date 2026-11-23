@@ -6,20 +6,23 @@ import { formatPence } from "@/lib/money";
 import type { PricedBasket } from "@/lib/pricing";
 import { MAX_QUANTITY } from "@/lib/pricing";
 import { ORDER_TYPES, useBasket } from "@/components/BasketProvider";
+import { DeliveryAddress } from "@/components/DeliveryAddress";
 import { OrderTypes } from "@/components/OrderTypes";
+import type { DeliveryQuote } from "@/lib/server/delivery";
 import { priceBasketOnServer } from "./actions";
 
 const NOTES: Record<string, string> = {
   collect: "Collect from 12–14 Park Lane. You'll choose a time at checkout.",
   table: "Eating in? Scan the QR code on your table and we'll bring your order to you.",
-  book: "Booking a table comes in a later step. Choose Collect, Table or Delivery to order food.",
-  delivery: "Our own drivers deliver up to 4 miles. The delivery fee is added at checkout.",
+  book: "To book a table, use Book a table on the menu. Choose Collect, Table or Delivery to order food.",
+  delivery: "Our own drivers deliver up to 4 miles from Park Lane.",
 };
 
 export function BasketView({ canOrder, paused = false, pausedMessage = null }: { canOrder: boolean; paused?: boolean; pausedMessage?: string | null }) {
   const basket = useBasket();
   const [priced, setPriced] = useState<PricedBasket | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [quote, setQuote] = useState<DeliveryQuote | null>(null);
 
   const lines = basket?.lines;
   useEffect(() => {
@@ -67,6 +70,8 @@ export function BasketView({ canOrder, paused = false, pausedMessage = null }: {
           {basket.orderType === "table" && basket.table ? `Table ${basket.table.number}. We'll bring your order to you.` : NOTES[basket.orderType]}
         </p>
       </section>
+
+      {basket.orderType === "delivery" && <DeliveryAddress onQuote={setQuote} />}
 
       <ul aria-label="Basket" className="flex flex-col">
         {basket.lines.map((line) => {
@@ -118,6 +123,13 @@ export function BasketView({ canOrder, paused = false, pausedMessage = null }: {
         <span data-testid="basket-subtotal">{priced ? formatPence(subtotal) : "…"}</span>
       </div>
 
+      {basket.orderType === "delivery" && quote?.ok && (
+        <div data-testid="basket-delivery-fee" className="flex items-center justify-between font-bold">
+          <span>Delivery</span>
+          <span>{formatPence(quote.feePence)}</span>
+        </div>
+      )}
+
       {shortOfMinimum > 0 && (
         <p data-testid="delivery-minimum" className="rounded-xl bg-club-cream px-4 py-3 text-sm font-bold">
           Add {formatPence(shortOfMinimum)} more for delivery (minimum order {formatPence(basket.deliveryMinPence)}).
@@ -128,9 +140,13 @@ export function BasketView({ canOrder, paused = false, pausedMessage = null }: {
         <button type="button" disabled data-testid="ordering-closed" className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
           {paused ? (pausedMessage ? `Not taking orders right now · ${pausedMessage}` : "Not taking orders right now") : "Ordering opens 10 December"}
         </button>
-      ) : basket.orderType === "delivery" || basket.orderType === "book" ? (
-        <button type="button" disabled className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
-          {basket.orderType === "delivery" ? "Delivery coming soon" : "Table booking coming soon"}
+      ) : basket.orderType === "book" ? (
+        <Link href="/book" className="rounded-2xl bg-club-green px-5 py-4 text-center font-bold text-club-paper">
+          Book a table
+        </Link>
+      ) : basket.orderType === "delivery" && (!quote?.ok || shortOfMinimum > 0) ? (
+        <button type="button" disabled data-testid="delivery-blocked" className="rounded-2xl bg-club-green/40 px-5 py-4 font-bold text-club-paper">
+          {!basket.delivery ? "Add your delivery address" : shortOfMinimum > 0 ? `Add ${formatPence(shortOfMinimum)} more for delivery` : "Choose an address we deliver to"}
         </button>
       ) : (
         <Link
@@ -139,7 +155,7 @@ export function BasketView({ canOrder, paused = false, pausedMessage = null }: {
           aria-disabled={!priced?.isValid}
           className={`rounded-2xl px-5 py-4 text-center font-bold text-club-paper ${priced?.isValid ? "bg-club-green" : "pointer-events-none bg-club-green/40"}`}
         >
-          Go to checkout{priced ? ` · ${formatPence(subtotal)}` : ""}
+          Go to checkout{priced ? ` · ${formatPence(subtotal + (basket.orderType === "delivery" && quote?.ok ? quote.feePence : 0))}` : ""}
         </Link>
       )}
       <Link href="/" className="text-center font-bold text-club-green underline">

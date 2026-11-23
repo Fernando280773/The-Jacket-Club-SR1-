@@ -41,12 +41,6 @@ test("a cancelled payment keeps the basket and says nothing was charged", async 
   await expect(page.getByTestId("checkout-total")).toHaveText("£5.50");
 });
 
-test("delivery and booking cannot check out yet", async ({ page }) => {
-  await addClassic(page);
-  await page.getByRole("radio", { name: "Delivery" }).click();
-  await expect(page.getByRole("button", { name: "Delivery coming soon" })).toBeDisabled();
-});
-
 test("an unknown table code is refused", async ({ page }) => {
   await page.goto("/t/0000000000000000");
   await expect(page.getByText(/isn't recognised|could not be loaded/)).toBeVisible();

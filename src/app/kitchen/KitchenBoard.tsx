@@ -1,5 +1,6 @@
 "use client";
 
+import { milesText } from "@/lib/delivery";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type { OrderStatus } from "@/lib/order-status";
 import {
@@ -63,6 +64,22 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
   const wakeLock = useRef<{ release: () => Promise<void> } | null>(null);
 
   const [bookings, setBookings] = useState<StaffBooking[]>([]);
+  const [drivers, setDrivers] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    staffClient()
+      .rpc("shop_drivers", { p_shop_id: staff.shopId })
+      .then(({ data }) => setDrivers((data ?? []) as { id: string; name: string }[]));
+  }, [staff.shopId]);
+
+  const assign = async (o: KitchenOrder, driverId: string) => {
+    if (!driverId) return;
+    setBusy(o.id);
+    const { error } = await staffClient().rpc("assign_driver", { p_order_id: o.id, p_driver_id: driverId });
+    setMessage(error ? `Order #${o.number}: couldn't assign the driver.` : `Order #${o.number} given to ${drivers.find((d) => d.id === driverId)?.name ?? "the driver"}.`);
+    await load();
+    setBusy(null);
+  };
 
   // Today's remaining bookings, so walk-ins aren't seated at booked tables.
   useEffect(() => {
@@ -183,7 +200,10 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
     // Show the change straight away; the reload below confirms it.
     setOrders((list) => list.map((x) => (x.id === o.id ? { ...x, status: to, updated_at: new Date().toISOString() } : x)));
     const { error } = await staffClient().rpc("set_order_status", { p_order_id: o.id, p_from: o.status, p_to: to });
-    if (error) setMessage(`Order #${o.number}: ${error.message.startsWith("order is already") ? "already changed on another screen" : "couldn't update. Check the Wi-Fi."}`);
+    if (error)
+      setMessage(
+        `Order #${o.number}: ${error.message.startsWith("order is already") ? "already changed on another screen" : error.message.includes("assign a driver") ? "assign a driver first" : "couldn't update. Check the Wi-Fi."}`,
+      );
     await load();
     setBusy(null);
   };
@@ -240,9 +260,9 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
       )}
 
       <div className="grid flex-1 grid-cols-1 gap-3 p-3 md:grid-cols-3">
-        <BoardColumn title="New" loaded={loaded} testId="col-new" orders={cols.new} now={now} busy={busy} onMove={move} />
-        <BoardColumn title="Preparing" loaded={loaded} testId="col-preparing" orders={cols.preparing} now={now} busy={busy} onMove={move} />
-        <BoardColumn title="Ready" loaded={loaded} testId="col-ready" orders={cols.ready} now={now} busy={busy} onMove={move} />
+        <BoardColumn title="New" loaded={loaded} testId="col-new" orders={cols.new} now={now} busy={busy} onMove={move} drivers={drivers} onAssign={assign} />
+        <BoardColumn title="Preparing" loaded={loaded} testId="col-preparing" orders={cols.preparing} now={now} busy={busy} onMove={move} drivers={drivers} onAssign={assign} />
+        <BoardColumn title="Ready" loaded={loaded} testId="col-ready" orders={cols.ready} now={now} busy={busy} onMove={move} drivers={drivers} onAssign={assign} />
       </div>
 
       <section aria-label="Done today" data-testid="col-done" className="border-t border-club-line px-3 py-3">
@@ -266,7 +286,29 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
   );
 }
 
-function BoardColumn({ title, loaded, testId, orders, now, busy, onMove }: { title: string; loaded: boolean; testId: string; orders: KitchenOrder[]; now: Date; busy: string | null; onMove: (o: KitchenOrder, to: OrderStatus | null) => void }) {
+type Driver = { id: string; name: string };
+
+function BoardColumn({
+  title,
+  loaded,
+  testId,
+  orders,
+  now,
+  busy,
+  onMove,
+  drivers,
+  onAssign,
+}: {
+  title: string;
+  loaded: boolean;
+  testId: string;
+  orders: KitchenOrder[];
+  now: Date;
+  busy: string | null;
+  onMove: (o: KitchenOrder, to: OrderStatus | null) => void;
+  drivers: Driver[];
+  onAssign: (o: KitchenOrder, driverId: string) => void;
+}) {
   return (
     <section aria-label={title} data-testid={testId} className="flex flex-col gap-3 rounded-2xl bg-club-cream/50 p-2">
       <h2 className="px-1 font-display text-lg text-club-green">
@@ -274,7 +316,7 @@ function BoardColumn({ title, loaded, testId, orders, now, busy, onMove }: { tit
       </h2>
       {orders.length === 0 && <p className="px-1 text-sm text-club-muted">{loaded ? "Nothing here" : "Loading…"}</p>}
       {orders.map((o) => (
-        <OrderCard key={o.id} order={o} now={now} busy={busy === o.id} onMove={onMove} />
+        <OrderCard key={o.id} order={o} now={now} busy={busy === o.id} onMove={onMove} drivers={drivers} onAssign={onAssign} />
       ))}
     </section>
   );
@@ -282,7 +324,23 @@ function BoardColumn({ title, loaded, testId, orders, now, busy, onMove }: { tit
 
 const AGE_STYLE = { ok: "border-club-line", amber: "border-amber-500 ring-2 ring-amber-400", red: "border-red-600 ring-2 ring-red-500" } as const;
 
-function OrderCard({ order: o, now, busy, onMove }: { order: KitchenOrder; now: Date; busy: boolean; onMove: (o: KitchenOrder, to: OrderStatus | null) => void }) {
+function OrderCard({
+  order: o,
+  now,
+  busy,
+  onMove,
+  drivers,
+  onAssign,
+}: {
+  order: KitchenOrder;
+  now: Date;
+  busy: boolean;
+  onMove: (o: KitchenOrder, to: OrderStatus | null) => void;
+  drivers: Driver[];
+  onAssign: (o: KitchenOrder, driverId: string) => void;
+}) {
+  const assigned = o.deliveries?.driver_assignments?.[0]?.driver_id ?? "";
+  const canAssign = o.type === "delivery" && ["received", "preparing", "ready"].includes(o.status);
   const mins = minutesSince(o.created_at, now);
   const level = ageLevel(mins);
   const label = actionLabel(o.type, o.status);
@@ -307,6 +365,33 @@ function OrderCard({ order: o, now, busy, onMove }: { order: KitchenOrder; now: 
           </li>
         ))}
       </ul>
+      {o.type === "delivery" && o.deliveries && (
+        <div data-testid="delivery-details" className="rounded-lg bg-club-cream px-2 py-1 text-sm">
+          <p className="font-bold">
+            {o.deliveries.address_text} · {milesText(Number(o.deliveries.distance_miles))} mi
+          </p>
+          {o.deliveries.note && <p>{o.deliveries.note}</p>}
+        </div>
+      )}
+      {canAssign && (
+        <label className="flex items-center gap-2 text-sm font-bold">
+          Driver
+          <select
+            data-testid="assign-driver"
+            value={assigned}
+            disabled={busy || drivers.length === 0}
+            onChange={(e) => onAssign(o, e.target.value)}
+            className="flex-1 rounded-lg border border-club-line bg-white px-2 py-2"
+          >
+            <option value="">{drivers.length === 0 ? "No drivers set up" : "Choose a driver"}</option>
+            {drivers.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       {o.note && <p className="rounded-lg bg-red-50 px-2 py-1 text-sm font-bold text-red-700">{o.note}</p>}
       <div className="flex gap-2">
         {back && o.status !== "received" && (

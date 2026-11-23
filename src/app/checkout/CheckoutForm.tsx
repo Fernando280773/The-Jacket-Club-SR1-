@@ -1,11 +1,14 @@
 "use client";
 
+import { milesText } from "@/lib/delivery";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatPence } from "@/lib/money";
 import type { PricedBasket } from "@/lib/pricing";
 import type { Slot } from "@/lib/slots";
 import { useBasket } from "@/components/BasketProvider";
+import { DeliveryAddress } from "@/components/DeliveryAddress";
+import type { DeliveryQuote } from "@/lib/server/delivery";
 import { priceBasketOnServer } from "../basket/actions";
 import { startCheckout, tableDepositPreview } from "./actions";
 
@@ -27,7 +30,7 @@ function Field({ id, label, error, children }: { id: string; label: string; erro
   );
 }
 
-export function CheckoutForm({ slots }: { slots: Slot[] }) {
+export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; deliverySlots: Slot[] }) {
   const basket = useBasket();
   const [priced, setPriced] = useState<PricedBasket | null>(null);
   const [name, setName] = useState("");
@@ -38,6 +41,9 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [credit, setCredit] = useState(0);
+  const [quote, setQuote] = useState<DeliveryQuote | null>(null);
+  const [deliverAt, setDeliverAt] = useState("");
+  const [deliveryNote, setDeliveryNote] = useState("");
 
   const lines = basket?.lines;
   useEffect(() => {
@@ -53,6 +59,10 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
     }
     tableDepositPreview(tableToken, lines).then(setCredit);
   }, [tableToken, lines]);
+
+  useEffect(() => {
+    if (!deliverAt && deliverySlots[0]) setDeliverAt(deliverySlots[0].iso);
+  }, [deliverySlots, deliverAt]);
 
   useEffect(() => {
     if (!pickupAt && slots[0]) setPickupAt(slots[0].iso);
@@ -71,7 +81,9 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
   }
 
   const type = basket.orderType;
-  const unsupported = type === "delivery" || type === "book";
+  const unsupported = type === "book";
+  const fee = type === "delivery" && quote?.ok ? quote.feePence : 0;
+  const deliveryBlocked = type === "delivery" && (!quote?.ok || deliverySlots.length === 0 || (priced ? priced.subtotalPence < basket.deliveryMinPence : true));
   const needsTable = type === "table" && !basket.table;
   const noSlots = type === "collect" && slots.length === 0;
 
@@ -79,7 +91,17 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
     e.preventDefault();
     setBusy(true);
     setMessage(null);
-    const r = await startCheckout({ lines: basket.lines, orderType: type, tableToken: basket.table?.token, pickupAt, name, phone, email }).catch(() => ({
+    const r = await startCheckout({
+      lines: basket.lines,
+      orderType: type,
+      tableToken: basket.table?.token,
+      pickupAt: type === "delivery" ? deliverAt : pickupAt,
+      deliveryAddress: basket.delivery?.label,
+      deliveryNote,
+      name,
+      phone,
+      email,
+    }).catch(() => ({
       ok: false as const,
       error: "Something went wrong. Please try again.",
     }));
@@ -112,9 +134,15 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
             <span>−{formatPence(credit)}</span>
           </div>
         )}
+        {fee > 0 && (
+          <div data-testid="checkout-delivery-fee" className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold">
+            <span>Delivery{quote?.ok ? ` (${milesText(quote.miles)} miles)` : ""}</span>
+            <span>{formatPence(fee)}</span>
+          </div>
+        )}
         <div className="mt-3 flex justify-between border-t border-club-line pt-3 font-bold">
           <span>Total</span>
-          <span data-testid="checkout-total">{priced ? formatPence(priced.subtotalPence - credit) : "…"}</span>
+          <span data-testid="checkout-total">{priced ? formatPence(priced.subtotalPence - credit + fee) : "…"}</span>
         </div>
         <Link href="/basket" className="mt-2 inline-block text-sm font-bold text-club-green underline">
           Edit basket
@@ -135,10 +163,34 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
         )}
         {noSlots && <p data-testid="collection-closed" className="rounded-xl bg-club-cream px-4 py-3 font-bold">Collection is closed for today. Please come back tomorrow.</p>}
         {type === "table" && basket.table && <p data-testid="table-number" className="rounded-xl bg-club-mint px-4 py-3 font-bold text-club-green">Table {basket.table.number}: we&apos;ll bring your order to you.</p>}
+        {type === "delivery" && (
+          <>
+            <DeliveryAddress onQuote={setQuote} />
+            {deliverySlots.length > 0 ? (
+              <Field id="deliverAt" label="Delivery time (today)" error={errors.pickupAt}>
+                <select id="deliverAt" value={deliverAt} onChange={(e) => setDeliverAt(e.target.value)} className={inputClass}>
+                  {deliverySlots.map((s) => (
+                    <option key={s.iso} value={s.iso}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            ) : (
+              <p data-testid="delivery-closed" className="rounded-xl bg-club-cream px-4 py-3 font-bold">Delivery is closed for today. Please come back tomorrow.</p>
+            )}
+            <Field id="deliveryNote" label="Flat number, door or directions (optional)" error={errors.deliveryNote}>
+              <input id="deliveryNote" maxLength={200} value={deliveryNote} onChange={(e) => setDeliveryNote(e.target.value)} className={inputClass} />
+            </Field>
+            {priced && priced.subtotalPence < basket.deliveryMinPence && (
+              <p className="rounded-xl bg-club-cream px-4 py-3 text-sm font-bold">Delivery needs at least {formatPence(basket.deliveryMinPence)} of food. Add more in your basket.</p>
+            )}
+          </>
+        )}
         {needsTable && <p className="rounded-xl bg-club-cream px-4 py-3 font-bold">Please scan the QR code on your table to order to it, or choose Collect.</p>}
         {unsupported && (
           <p className="rounded-xl bg-club-cream px-4 py-3 font-bold">
-            {type === "delivery" ? "Delivery is coming soon. Please choose Collect or Table in your basket." : <>To book a table, use <Link href="/book" className="underline">Book a table</Link>. To order now, choose Collect or Table.</>}
+            {<>To book a table, use <Link href="/book" className="underline">Book a table</Link>. To order now, choose Collect or Table.</>}
           </p>
         )}
       </section>
@@ -164,10 +216,10 @@ export function CheckoutForm({ slots }: { slots: Slot[] }) {
       <button
         type="submit"
         data-testid="pay-button"
-        disabled={busy || unsupported || needsTable || noSlots || !priced?.isValid}
+        disabled={busy || unsupported || needsTable || (type === "collect" && noSlots) || deliveryBlocked || !priced?.isValid}
         className="rounded-2xl bg-club-green px-5 py-4 font-bold text-club-paper disabled:bg-club-green/40"
       >
-        {busy ? "Opening secure payment…" : `Pay ${priced ? formatPence(priced.subtotalPence - credit) : ""}`}
+        {busy ? "Opening secure payment…" : `Pay ${priced ? formatPence(priced.subtotalPence - credit + fee) : ""}`}
       </button>
       <p className="text-center text-xs text-club-muted">Secure payment by Stripe: card, Apple Pay or Google Pay.</p>
     </form>
