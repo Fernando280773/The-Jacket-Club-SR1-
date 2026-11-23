@@ -1,3 +1,4 @@
+import "server-only";
 import { deliveryFeePence, metresToMiles, milesText, type DeliveryRules } from "../delivery";
 import { publicClient, SHOP_SLUG } from "../supabase";
 import { roadMetresFromShop, searchAddresses, type AddressMatch } from "./mapbox";

@@ -36,6 +36,7 @@ test("checkout checks name and UK mobile before payment", async ({ page }) => {
 
 test("a cancelled payment keeps the basket and says nothing was charged", async ({ page }) => {
   await addClassic(page);
+  await expect(page).toHaveURL(/\/basket/); // let the basket page finish loading first
   await page.goto("/checkout?cancelled=1");
   await expect(page.getByTestId("payment-cancelled")).toContainText("You haven't been charged");
   await expect(page.getByTestId("checkout-total")).toHaveText("£5.50");

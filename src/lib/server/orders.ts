@@ -1,3 +1,4 @@
+import "server-only";
 import type { OrderStatus, OrderType } from "../order-status";
 import { adminClient } from "./admin";
 

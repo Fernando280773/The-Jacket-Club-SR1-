@@ -80,7 +80,8 @@ test("menu loads in under 2 seconds on a simulated 4G phone", async ({ page, bro
   expect(ms).toBeLessThan(2000);
 });
 
-test("screenshots for review", async ({ page }) => {
+test("screenshots for review", async ({ page }, info) => {
+  test.skip(info.project.name !== "pixel", "one set of screenshots is enough");
   await page.goto("/");
   await expect(page.getByTestId("open-status")).not.toHaveText("Checking hours…");
   await page.screenshot({ path: "test-results/screens/menu-top.png" });

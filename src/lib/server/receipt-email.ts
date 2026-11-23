@@ -1,3 +1,4 @@
+import "server-only";
 import { buildReceipt } from "../receipt";
 import { adminClient } from "./admin";
 import { orderById } from "./orders";

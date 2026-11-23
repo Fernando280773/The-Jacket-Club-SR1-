@@ -1,3 +1,4 @@
+import "server-only";
 import { postcodeOf, SHOP_LOCATION } from "../delivery";
 
 /** Mapbox is only called from our server. MAPBOX_ACCESS_TOKEN lives in Vercel settings, never in the browser. */

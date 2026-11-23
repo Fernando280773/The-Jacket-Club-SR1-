@@ -1,3 +1,4 @@
+import "server-only";
 import { SHOP_SLUG } from "../supabase";
 import { adminClient } from "./admin";
 

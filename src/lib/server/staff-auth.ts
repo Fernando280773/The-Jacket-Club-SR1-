@@ -1,3 +1,4 @@
+import "server-only";
 import { adminClient } from "./admin";
 
 export type StaffCaller = { authUserId: string; shopId: string; name: string; role: "owner" | "kitchen" | "driver" };

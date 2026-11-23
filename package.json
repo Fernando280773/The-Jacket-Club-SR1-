@@ -18,9 +18,11 @@
     "next": "15.5.29",
     "react": "19.1.10",
     "react-dom": "19.1.10",
+    "server-only": "^0.0.1",
     "stripe": "17.7.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "1.55.0",
     "@tailwindcss/postcss": "^4",
