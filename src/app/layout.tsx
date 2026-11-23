@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
 
 // Fonts are bundled with the app (SIL Open Font Licence, see src/app/fonts).
@@ -21,7 +22,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-GB">
-      <body className={`${display.variable} ${body.variable} antialiased`}>{children}</body>
+      <body className={`${display.variable} ${body.variable} antialiased`}>
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }

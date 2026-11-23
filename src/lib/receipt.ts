@@ -1,4 +1,7 @@
+import { COMPANY_LINE } from "./company";
 import { formatPence } from "./money";
+
+export { COMPANY_LINE };
 
 export type ReceiptOrder = {
   number: number;
@@ -20,7 +23,6 @@ const ukTime = (iso: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Eu
 const ukDate = (iso: string) =>
   new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", weekday: "short", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
-export const COMPANY_LINE = "Fernando & Sons Property Ltd trading as The Jacket Club SR1 · 12–14 Park Lane, Sunderland SR1 3NX";
 
 function whereText(o: ReceiptOrder): string {
   if (o.type === "collect" && o.pickup_at) return `Collect from 12–14 Park Lane at ${ukTime(o.pickup_at)}`;
@@ -52,7 +54,7 @@ ${where ? `<tr><td style="padding-top:6px;font-size:16px">${esc(where)}</td></tr
 ${o.delivery_fee_pence ? `<tr><td style="padding-top:12px">Delivery</td><td style="padding-top:12px;text-align:right">${formatPence(o.delivery_fee_pence)}</td></tr>` : ""}
 ${o.deposit_credit_pence ? `<tr><td style="padding-top:12px;color:#1f4a2c">Booking deposit</td><td style="padding-top:12px;text-align:right;color:#1f4a2c">−${formatPence(o.deposit_credit_pence)}</td></tr>` : ""}
 <tr><td style="padding-top:12px;font-size:17px"><strong>Total paid</strong></td><td style="padding-top:12px;text-align:right;font-size:17px"><strong>${formatPence(o.total_pence)}</strong></td></tr></table></td></tr>
-<tr><td style="padding-top:20px;font-size:12px;color:#6b5a48">Ordered ${esc(ukDate(o.created_at))}. Prices include VAT. 100% halal.<br>${esc(COMPANY_LINE)}<br>Questions? Reply to this email or contact info@thejacketclubsr1.com</td></tr>
+<tr><td style="padding-top:20px;font-size:12px;color:#6b5a48">Ordered ${esc(ukDate(o.created_at))}. 100% halal.<br>${esc(COMPANY_LINE)}<br>Questions? Reply to this email or contact info@thejacketclubsr1.com</td></tr>
 </table></td></tr></table></body></html>`;
   const text = [
     `The Jacket Club SR1: order #${o.number}`,
@@ -68,7 +70,6 @@ ${o.deposit_credit_pence ? `<tr><td style="padding-top:12px;color:#1f4a2c">Booki
     `Total paid: ${formatPence(o.total_pence)}`,
     `Track your order: ${statusUrl}`,
     "",
-    "Prices include VAT.",
     COMPANY_LINE,
   ]
     .filter((l, i, a) => !(l === "" && a[i - 1] === ""))

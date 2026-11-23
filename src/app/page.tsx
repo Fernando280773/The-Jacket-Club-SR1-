@@ -83,7 +83,7 @@ export default async function MenuPage() {
       ))}
 
       <footer className="flex flex-col gap-2 pt-8 text-sm text-club-muted">
-        <p>All our food is 100% halal. Prices include VAT.</p>
+        <p>All our food is 100% halal.</p>
         <p>
           Allergies? See our{" "}
           <Link href="/allergens" className="font-bold text-club-green underline">

@@ -7,6 +7,7 @@ import { formatPence } from "@/lib/money";
 import type { PricedBasket } from "@/lib/pricing";
 import type { Slot } from "@/lib/slots";
 import { useBasket } from "@/components/BasketProvider";
+import { AgreeLine } from "@/components/AgreeLine";
 import { DeliveryAddress } from "@/components/DeliveryAddress";
 import type { DeliveryQuote } from "@/lib/server/delivery";
 import { priceBasketOnServer } from "../basket/actions";
@@ -221,6 +222,7 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
       >
         {busy ? "Opening secure payment…" : `Pay ${priced ? formatPence(priced.subtotalPence - credit + fee) : ""}`}
       </button>
+      <AgreeLine />
       <p className="text-center text-xs text-club-muted">Secure payment by Stripe: card, Apple Pay or Google Pay.</p>
     </form>
   );
