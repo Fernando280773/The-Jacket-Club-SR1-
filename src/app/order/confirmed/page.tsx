@@ -53,6 +53,12 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
         </h1>
         {order?.type === "collect" && order.pickup_at && <p className="text-lg font-bold">Collect from 12–14 Park Lane at {ukTime(order.pickup_at)}</p>}
         {order?.type === "table" && order.dining_tables && <p className="text-lg font-bold">We&apos;ll bring it to table {order.dining_tables.number}</p>}
+        {order?.type === "delivery" && order.deliveries && (
+          <p className="text-lg font-bold">
+            Delivering to {order.deliveries.address_text}
+            {order.pickup_at ? ` at ${ukTime(order.pickup_at)}` : ""}
+          </p>
+        )}
         <p className="text-sm text-club-muted">
           Payment received.{order?.customers?.email ? ` A receipt is on its way to ${order.customers.email}.` : ""} Show your order number when you collect.
         </p>
@@ -79,7 +85,13 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
               </li>
             ))}
           </ul>
-          {order.deposit_credit_pence > 0 && (
+          {order.delivery_fee_pence > 0 && (
+          <div className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold">
+            <span>Delivery</span>
+            <span>{formatPence(order.delivery_fee_pence)}</span>
+          </div>
+        )}
+        {order.deposit_credit_pence > 0 && (
             <div className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold text-club-green">
               <span>Booking deposit</span>
               <span>−{formatPence(order.deposit_credit_pence)}</span>

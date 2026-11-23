@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BasketProvider } from "@/components/BasketProvider";
 import { getMenu } from "@/lib/menu";
+import { deliverySlots } from "@/lib/delivery";
 import { pickupSlots } from "@/lib/slots";
 import { orderingOpen } from "@/lib/server/ordering";
 import { CheckoutForm } from "./CheckoutForm";
@@ -34,7 +35,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
             We&apos;re not taking online orders right now.{result.menu.pausedMessage ? ` ${result.menu.pausedMessage}` : ""}
           </p>
         ) : orderingOpen(now) ? (
-          <CheckoutForm slots={pickupSlots(result.menu.hours, now)} />
+          <CheckoutForm slots={pickupSlots(result.menu.hours, now)} deliverySlots={deliverySlots(result.menu.hours, now)} />
         ) : (
           <p className="py-8 text-center font-bold">Ordering opens 10 December.</p>
         )}

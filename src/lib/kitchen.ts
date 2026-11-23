@@ -12,11 +12,12 @@ export type KitchenOrder = {
   customer_name: string | null;
   note: string | null;
   dining_tables: { number: number } | null;
+  deliveries: { address_text: string; postcode: string; note: string | null; distance_miles: number; driver_assignments: { driver_id: string }[] } | null;
   order_lines: { id: string; item_name: string; quantity: number; order_line_options: { option_name: string; count: number }[] }[];
 };
 
 export const KITCHEN_SELECT =
-  "id, number, type, status, pickup_at, created_at, updated_at, customer_name, note, dining_tables(number), order_lines(id, item_name, quantity, order_line_options(option_name, count))";
+  "id, number, type, status, pickup_at, created_at, updated_at, customer_name, note, dining_tables(number), deliveries(address_text, postcode, note, distance_miles, driver_assignments(driver_id)), order_lines(id, item_name, quantity, order_line_options(option_name, count))";
 
 export type Column = "new" | "preparing" | "ready" | "done";
 
@@ -68,7 +69,7 @@ export const ukTime = (iso: string) =>
 /** "Collect 12:15", "Table 7", "Delivery". */
 export function whereLabel(o: Pick<KitchenOrder, "type" | "pickup_at" | "dining_tables">): string {
   if (o.type === "table") return o.dining_tables ? `Table ${o.dining_tables.number}` : "Table";
-  if (o.type === "delivery") return "Delivery";
+  if (o.type === "delivery") return o.pickup_at ? `Delivery ${ukTime(o.pickup_at)}` : "Delivery";
   return o.pickup_at ? `Collect ${ukTime(o.pickup_at)}` : "Collect";
 }
 

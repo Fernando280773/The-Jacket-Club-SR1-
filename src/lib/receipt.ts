@@ -10,6 +10,8 @@ export type ReceiptOrder = {
   created_at: string;
   customer_name: string | null;
   dining_tables: { number: number } | null;
+  delivery_fee_pence?: number;
+  deliveries?: { address_text: string } | null;
   order_lines: { item_name: string; quantity: number; line_total_pence: number; order_line_options: { option_name: string; count: number }[] }[];
 };
 
@@ -23,6 +25,7 @@ export const COMPANY_LINE = "Fernando & Sons Property Ltd trading as The Jacket 
 function whereText(o: ReceiptOrder): string {
   if (o.type === "collect" && o.pickup_at) return `Collect from 12–14 Park Lane at ${ukTime(o.pickup_at)}`;
   if (o.type === "table" && o.dining_tables) return `We'll bring it to table ${o.dining_tables.number}`;
+  if (o.type === "delivery" && o.deliveries) return `Delivering to ${o.deliveries.address_text}${o.pickup_at ? ` at ${ukTime(o.pickup_at)}` : ""}`;
   return "";
 }
 
@@ -46,6 +49,7 @@ export function buildReceipt(o: ReceiptOrder, statusUrl: string) {
 ${where ? `<tr><td style="padding-top:6px;font-size:16px">${esc(where)}</td></tr>` : ""}
 <tr><td style="padding-top:16px"><a href="${esc(statusUrl)}" style="display:inline-block;background:#1f4a2c;color:#fbf6ea;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:12px">Track your order</a></td></tr>
 <tr><td style="padding-top:20px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px">${rows}
+${o.delivery_fee_pence ? `<tr><td style="padding-top:12px">Delivery</td><td style="padding-top:12px;text-align:right">${formatPence(o.delivery_fee_pence)}</td></tr>` : ""}
 ${o.deposit_credit_pence ? `<tr><td style="padding-top:12px;color:#1f4a2c">Booking deposit</td><td style="padding-top:12px;text-align:right;color:#1f4a2c">−${formatPence(o.deposit_credit_pence)}</td></tr>` : ""}
 <tr><td style="padding-top:12px;font-size:17px"><strong>Total paid</strong></td><td style="padding-top:12px;text-align:right;font-size:17px"><strong>${formatPence(o.total_pence)}</strong></td></tr></table></td></tr>
 <tr><td style="padding-top:20px;font-size:12px;color:#6b5a48">Ordered ${esc(ukDate(o.created_at))}. Prices include VAT. 100% halal.<br>${esc(COMPANY_LINE)}<br>Questions? Reply to this email or contact info@thejacketclubsr1.com</td></tr>
@@ -59,6 +63,7 @@ ${o.deposit_credit_pence ? `<tr><td style="padding-top:12px;color:#1f4a2c">Booki
       return `${l.quantity} x ${l.item_name}${opts ? ` (${opts})` : ""}: ${formatPence(l.line_total_pence)}`;
     }),
     "",
+    ...(o.delivery_fee_pence ? [`Delivery: ${formatPence(o.delivery_fee_pence)}`] : []),
     ...(o.deposit_credit_pence ? [`Booking deposit: -${formatPence(o.deposit_credit_pence)}`] : []),
     `Total paid: ${formatPence(o.total_pence)}`,
     `Track your order: ${statusUrl}`,

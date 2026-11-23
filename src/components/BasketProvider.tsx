@@ -14,13 +14,16 @@ export const ORDER_TYPES: { key: OrderType; label: string }[] = [
 ];
 
 export type TableRef = { token: string; number: number };
-type BasketState = { lines: BasketLine[]; orderType: OrderType; table?: TableRef };
+/** Only the address text is kept; distance and fee are always worked out again on the server. */
+export type DeliveryRef = { label: string };
+type BasketState = { lines: BasketLine[]; orderType: OrderType; table?: TableRef; delivery?: DeliveryRef };
 
 type BasketContextValue = BasketState & {
   ready: boolean;
   pricing: PricingMenu;
   deliveryMinPence: number;
   setOrderType: (t: OrderType) => void;
+  setDelivery: (d: DeliveryRef | undefined) => void;
   addLine: (itemCode: string, choices: Choices, quantity: number) => void;
   setQuantity: (id: string, quantity: number) => void;
   removeLine: (id: string) => void;
@@ -42,7 +45,8 @@ function load(): BasketState | null {
     const parsed = JSON.parse(raw) as BasketState;
     if (!Array.isArray(parsed.lines)) return null;
     const table = parsed.table && typeof parsed.table.token === "string" && typeof parsed.table.number === "number" ? parsed.table : undefined;
-    return { lines: parsed.lines, orderType: ORDER_TYPES.some((t) => t.key === parsed.orderType) ? parsed.orderType : "collect", table };
+    const delivery = parsed.delivery && typeof parsed.delivery.label === "string" ? { label: parsed.delivery.label.slice(0, 200) } : undefined;
+    return { lines: parsed.lines, orderType: ORDER_TYPES.some((t) => t.key === parsed.orderType) ? parsed.orderType : "collect", table, delivery };
   } catch {
     return null;
   }
@@ -101,6 +105,7 @@ export function BasketProvider({ menu, children }: { menu: Pick<Menu, "categorie
     pricing,
     deliveryMinPence: menu.deliveryMinPence,
     setOrderType: (orderType) => setState((s) => ({ ...s, orderType })),
+    setDelivery: (delivery) => setState((s) => ({ ...s, delivery })),
     addLine,
     setQuantity: (id, quantity) =>
       setState((s) => ({ ...s, lines: s.lines.map((l) => (l.id === id ? { ...l, quantity: Math.max(1, Math.min(MAX_QUANTITY, quantity)) } : l)) })),

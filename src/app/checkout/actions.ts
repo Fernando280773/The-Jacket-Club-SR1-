@@ -10,7 +10,10 @@ import { pickupSlots } from "@/lib/slots";
 import { adminClient } from "@/lib/server/admin";
 import { orderingOpen } from "@/lib/server/ordering";
 import { paymentsConfigured, stripe } from "@/lib/server/stripe";
+import { deliverySlots } from "@/lib/delivery";
 import { depositForTable } from "@/lib/server/bookings";
+import { quoteForAddress } from "@/lib/server/delivery";
+import { formatPence } from "@/lib/money";
 import { tableForToken } from "@/lib/server/tables";
 
 export type StartCheckoutInput = {
@@ -18,6 +21,8 @@ export type StartCheckoutInput = {
   orderType: string;
   tableToken?: string;
   pickupAt?: string;
+  deliveryAddress?: string;
+  deliveryNote?: string;
   name: string;
   phone: string;
   email: string;
@@ -55,6 +60,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
   let tableId: string | null = null;
   let tableNumber = "";
   let deposit: { bookingId: string; creditPence: number } | null = null;
+  let delivery: { label: string; postcode: string; latitude: number; longitude: number; miles: number; feePence: number; note: string } | null = null;
   if (input.orderType === "collect") {
     const slot = pickupSlots(menu.hours, now).find((s) => s.iso === input.pickupAt);
     if (!slot) return { ok: false, error: "Please choose a collection time.", fieldErrors: { pickupAt: "Please choose a collection time" } };
@@ -66,14 +72,46 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     tableId = table.id;
     tableNumber = String(table.number);
     deposit = await depositForTable(table.id, basket.subtotalPence, now).catch(() => null);
+  } else if (input.orderType === "delivery") {
+    if (basket.subtotalPence < menu.deliveryMinPence) return { ok: false, error: `Delivery needs at least ${formatPence(menu.deliveryMinPence)} of food.` };
+    const slot = deliverySlots(menu.hours, now).find((s) => s.iso === input.pickupAt);
+    if (!slot) return { ok: false, error: "Please choose a delivery time.", fieldErrors: { pickupAt: "Please choose a delivery time" } };
+    const quote = await quoteForAddress(String(input.deliveryAddress ?? "").slice(0, 200));
+    if (!quote.ok) return { ok: false, error: quote.error };
+    pickupAt = slot.iso;
+    delivery = {
+      label: quote.address.label,
+      postcode: quote.address.postcode,
+      latitude: quote.address.latitude,
+      longitude: quote.address.longitude,
+      miles: quote.miles,
+      feePence: quote.feePence,
+      note: String(input.deliveryNote ?? "").trim().slice(0, 200),
+    };
   } else {
-    return { ok: false, error: "Delivery and table booking are coming soon. Please choose Collect or Table." };
+    return { ok: false, error: "To book a table, use Book a table. To order now, choose Collect, Table or Delivery." };
   }
 
   // Save the basket on the server so the order is built from our data, not the browser's.
   const { data: savedBasket, error: basketError } = await db
     .from("baskets")
-    .insert({ shop_id: shop.id, device_token: randomBytes(16).toString("hex"), order_type: input.orderType, dining_table_id: tableId })
+    .insert({
+      shop_id: shop.id,
+      device_token: randomBytes(16).toString("hex"),
+      order_type: input.orderType,
+      dining_table_id: tableId,
+      ...(delivery
+        ? {
+            delivery_address: delivery.label,
+            delivery_postcode: delivery.postcode,
+            delivery_latitude: delivery.latitude,
+            delivery_longitude: delivery.longitude,
+            delivery_distance_miles: delivery.miles,
+            delivery_fee_pence: delivery.feePence,
+            delivery_note: delivery.note || null,
+          }
+        : {}),
+    })
     .select("id")
     .single();
   if (basketError || !savedBasket) return { ok: false, error: "Could not save your basket. Please try again." };
@@ -116,7 +154,12 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     const session = await stripe().checkout.sessions.create({
       ...(coupon ? { discounts: [{ coupon: coupon.id }] } : {}),
       mode: "payment",
-      line_items: stripeLineItems(basket),
+      line_items: [
+        ...stripeLineItems(basket),
+        ...(delivery
+          ? [{ quantity: 1, price_data: { currency: "gbp", unit_amount: delivery.feePence, product_data: { name: `Delivery (${delivery.miles.toFixed(1)} miles)`, description: delivery.label.slice(0, 200) } } }]
+          : []),
+      ],
       customer_email: metadata.email || undefined,
       client_reference_id: savedBasket.id,
       metadata,
