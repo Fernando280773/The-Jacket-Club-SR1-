@@ -1,5 +1,6 @@
 "use client";
 
+import { milesText } from "@/lib/delivery";
 import { useEffect, useRef, useState } from "react";
 import { formatPence } from "@/lib/money";
 import type { DeliveryQuote } from "@/lib/server/delivery";
@@ -91,7 +92,7 @@ export function DeliveryAddress({ onQuote }: { onQuote?: (q: DeliveryQuote | nul
       {checking && <p className="text-sm text-club-muted">Checking distance…</p>}
       {!checking && quote?.ok && saved && (
         <p data-testid="delivery-quote" className="text-sm font-bold text-club-green">
-          {quote.miles.toFixed(1)} miles by road · delivery {formatPence(quote.feePence)}
+          {milesText(quote.miles)} miles by road · delivery {formatPence(quote.feePence)}
         </p>
       )}
       {!checking && quote && !quote.ok && saved && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { milesText } from "@/lib/delivery";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatPence } from "@/lib/money";
@@ -135,7 +136,7 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
         )}
         {fee > 0 && (
           <div data-testid="checkout-delivery-fee" className="mt-3 flex justify-between border-t border-club-line pt-3 text-sm font-bold">
-            <span>Delivery{quote?.ok ? ` (${quote.miles.toFixed(1)} miles)` : ""}</span>
+            <span>Delivery{quote?.ok ? ` (${milesText(quote.miles)} miles)` : ""}</span>
             <span>{formatPence(fee)}</span>
           </div>
         )}

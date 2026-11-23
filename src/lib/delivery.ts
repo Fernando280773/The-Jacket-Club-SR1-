@@ -13,6 +13,9 @@ export const DELIVERY_LEAD_MINUTES = 45;
 
 export const metresToMiles = (m: number) => Math.round((m / METRES_PER_MILE) * 100) / 100;
 
+/** Distance for people to read, always rounded UP to 0.1 so it never looks shorter than the fee: 1.01 → "1.1". */
+export const milesText = (miles: number) => (Math.ceil(Math.round(miles * 100) / 10) / 10).toFixed(1);
+
 /**
  * Fee for a road distance: the first mile, plus each extra mile started (rounded up).
  * 0.5 mi £1.99 · 1 mi £1.99 · 1.1 mi £2.79 · 2.5 mi £3.59 · 4 mi £4.39. Null when too far.

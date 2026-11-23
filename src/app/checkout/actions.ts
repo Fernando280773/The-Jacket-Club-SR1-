@@ -10,7 +10,7 @@ import { pickupSlots } from "@/lib/slots";
 import { adminClient } from "@/lib/server/admin";
 import { orderingOpen } from "@/lib/server/ordering";
 import { paymentsConfigured, stripe } from "@/lib/server/stripe";
-import { deliverySlots } from "@/lib/delivery";
+import { deliverySlots, milesText } from "@/lib/delivery";
 import { depositForTable } from "@/lib/server/bookings";
 import { quoteForAddress } from "@/lib/server/delivery";
 import { formatPence } from "@/lib/money";
@@ -157,7 +157,7 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
       line_items: [
         ...stripeLineItems(basket),
         ...(delivery
-          ? [{ quantity: 1, price_data: { currency: "gbp", unit_amount: delivery.feePence, product_data: { name: `Delivery (${delivery.miles.toFixed(1)} miles)`, description: delivery.label.slice(0, 200) } } }]
+          ? [{ quantity: 1, price_data: { currency: "gbp", unit_amount: delivery.feePence, product_data: { name: `Delivery (${milesText(delivery.miles)} miles)`, description: delivery.label.slice(0, 200) } } }]
           : []),
       ],
       customer_email: metadata.email || undefined,

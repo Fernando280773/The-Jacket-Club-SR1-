@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { StaffGate, type Staff } from "@/components/StaffGate";
-import { navigateUrl } from "@/lib/delivery";
+import { milesText, navigateUrl } from "@/lib/delivery";
 import { optionsText, ukMidnight, ukTime } from "@/lib/kitchen";
 import type { OrderStatus } from "@/lib/order-status";
 import { staffClient } from "@/lib/staff-client";
@@ -91,7 +91,7 @@ function DriverBoard({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
               <p className="text-lg font-bold">{o.deliveries?.address_text}</p>
               {o.deliveries?.note && <p className="rounded-lg bg-club-butter/40 px-2 py-1 text-sm font-bold">{o.deliveries.note}</p>}
               <p className="text-sm text-club-muted">
-                {o.customer_name} · {o.deliveries ? `${Number(o.deliveries.distance_miles).toFixed(1)} mi` : ""}
+                {o.customer_name} · {o.deliveries ? `${milesText(Number(o.deliveries.distance_miles))} mi` : ""}
               </p>
             </div>
             <ul className="text-sm">

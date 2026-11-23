@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deliveryFeePence, deliverySlots, metresToMiles, navigateUrl, postcodeOf, shortOfDeliveryMinimum, type DeliveryRules } from "./delivery";
+import { milesText, deliveryFeePence, deliverySlots, metresToMiles, navigateUrl, postcodeOf, shortOfDeliveryMinimum, type DeliveryRules } from "./delivery";
 
 const RULES: DeliveryRules = { firstMilePence: 199, perExtraMilePence: 80, maxMiles: 4, minOrderPence: 1200 };
 
@@ -16,6 +16,12 @@ describe("delivery fee (round up each extra mile)", () => {
     expect(deliveryFeePence(4.01, RULES)).toBeNull();
     expect(deliveryFeePence(4.5, RULES)).toBeNull();
     expect(deliveryFeePence(Number.NaN, RULES)).toBeNull();
+  });
+  it("shows distance rounded up so it matches the fee", () => {
+    expect(milesText(1.01)).toBe("1.1");
+    expect(milesText(1)).toBe("1.0");
+    expect(milesText(2.5)).toBe("2.5");
+    expect(milesText(0.43)).toBe("0.5");
   });
   it("turns road metres into miles", () => {
     expect(metresToMiles(1609.344)).toBe(1);

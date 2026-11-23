@@ -1,4 +1,4 @@
-import { deliveryFeePence, metresToMiles, type DeliveryRules } from "../delivery";
+import { deliveryFeePence, metresToMiles, milesText, type DeliveryRules } from "../delivery";
 import { publicClient, SHOP_SLUG } from "../supabase";
 import { roadMetresFromShop, searchAddresses, type AddressMatch } from "./mapbox";
 
@@ -33,7 +33,7 @@ export async function quoteForAddress(label: string): Promise<DeliveryQuote> {
     const rules = await deliveryRules();
     const miles = metresToMiles(await roadMetresFromShop(match));
     const fee = deliveryFeePence(miles, rules);
-    if (fee === null) return { ok: false, reason: "too_far", miles, error: `Sorry, that's ${miles.toFixed(1)} miles away. We deliver up to ${rules.maxMiles} miles from Park Lane.` };
+    if (fee === null) return { ok: false, reason: "too_far", miles, error: `Sorry, that's ${milesText(miles)} miles away. We deliver up to ${rules.maxMiles} miles from Park Lane.` };
     return { ok: true, address: match, miles, feePence: fee };
   } catch {
     return { ok: false, reason: "unavailable", error: "Delivery can't be checked right now. Please try again, or choose Collect." };

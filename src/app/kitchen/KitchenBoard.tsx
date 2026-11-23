@@ -1,5 +1,6 @@
 "use client";
 
+import { milesText } from "@/lib/delivery";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type { OrderStatus } from "@/lib/order-status";
 import {
@@ -367,7 +368,7 @@ function OrderCard({
       {o.type === "delivery" && o.deliveries && (
         <div data-testid="delivery-details" className="rounded-lg bg-club-cream px-2 py-1 text-sm">
           <p className="font-bold">
-            {o.deliveries.address_text} · {Number(o.deliveries.distance_miles).toFixed(1)} mi
+            {o.deliveries.address_text} · {milesText(Number(o.deliveries.distance_miles))} mi
           </p>
           {o.deliveries.note && <p>{o.deliveries.note}</p>}
         </div>
