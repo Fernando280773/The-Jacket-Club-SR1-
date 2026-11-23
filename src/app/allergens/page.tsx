@@ -33,7 +33,7 @@ export default async function AllergensPage() {
         </p>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-xl border border-club-line">
+      <div className="mt-4 overflow-x-auto rounded-xl border border-club-line" tabIndex={0} role="region" aria-label="Allergen table, scroll sideways for more">
         <table data-testid="allergen-table" className="min-w-max border-collapse text-xs">
           <thead className="bg-club-cream">
             <tr>
