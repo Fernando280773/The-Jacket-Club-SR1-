@@ -34,3 +34,7 @@ test("staff test mode needs an owner login", async ({ request }) => {
   const res = await request.get("/api/staff/test-mode", { headers: { Cookie: "jc_staff_test=forged.token.x" } });
   expect(await res.json()).toEqual({ on: false });
 });
+
+test("the test error alert needs an owner login", async ({ request }) => {
+  expect((await request.post("/api/staff/sentry-test")).status()).toBe(401);
+});

@@ -13,6 +13,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
+    "@sentry/nextjs": "^11.17.0",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.49.4",
     "next": "15.5.29",

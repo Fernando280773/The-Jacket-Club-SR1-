@@ -34,6 +34,15 @@ export function StaffTestMode() {
     setNotice("Staff test mode is on in this browser for about an hour.");
   };
 
+  const sendTestError = async () => {
+    setBusy(true);
+    const { data } = await staffClient().auth.getSession();
+    const res = await fetch("/api/staff/sentry-test", { method: "POST", headers: { Authorization: `Bearer ${data.session?.access_token ?? ""}` } });
+    const j = (await res.json().catch(() => ({ ok: false }))) as { ok: boolean };
+    setBusy(false);
+    setNotice(j.ok ? "Test error sent. An alert email should arrive within a few minutes." : "Could not send the test error (error alerts work on the live site and previews only).");
+  };
+
   const turnOff = async () => {
     setBusy(true);
     await fetch("/api/staff/test-mode", { method: "DELETE" });
@@ -61,6 +70,9 @@ export function StaffTestMode() {
       <p className="text-sm text-club-muted">
         Before opening day, lets this browser place real orders and bookings on the live site (for the payment test and the practice service). They show as STAFF TEST in the kitchen.
       </p>
+      <button type="button" data-testid="send-test-error" disabled={busy} onClick={sendTestError} className="self-start text-sm font-bold underline disabled:opacity-50">
+        Send a test error alert
+      </button>
       {notice && (
         <p role="status" className="text-sm font-bold">
           {notice}

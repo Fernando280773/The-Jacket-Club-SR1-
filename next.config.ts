@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
 // Safe-by-default browser headers on every page. Payments happen on Stripe's own page (redirect),
@@ -22,4 +23,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Error alerts. Source maps are not uploaded (that would need a secret token); stack traces still show file and line.
+export default withSentryConfig(nextConfig, { org: "the-jacket-club-sr1", project: "the-jacket-club-sr1", silent: true, telemetry: false, sourcemaps: { disable: true } });

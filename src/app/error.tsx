@@ -1,6 +1,12 @@
 "use client";
 
-export default function MenuError({ reset }: { error: Error; reset: () => void }) {
+import * as Sentry from "@sentry/nextjs";
+import { useEffect } from "react";
+
+export default function MenuError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
       <h1 className="font-display text-2xl text-club-green">The Jacket Club SR1</h1>
