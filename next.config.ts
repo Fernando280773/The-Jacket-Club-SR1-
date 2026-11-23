@@ -13,6 +13,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Lets browser code know if it is on the live site or a preview (for error alerts).
+  env: { NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV ?? "" },
   poweredByHeader: false,
   images: {
     // Menu photos uploaded in admin live in Supabase Storage.
