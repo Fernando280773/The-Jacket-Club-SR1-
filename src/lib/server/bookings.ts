@@ -1,3 +1,4 @@
+import "server-only";
 import { buildBookingEmail } from "../booking-email";
 import {
   availableStarts,

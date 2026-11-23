@@ -1,3 +1,4 @@
+import "server-only";
 const FROM = () => process.env.RECEIPT_FROM ?? "The Jacket Club SR1 <info@thejacketclubsr1.com>";
 
 export const emailConfigured = () => !!process.env.RESEND_API_KEY;

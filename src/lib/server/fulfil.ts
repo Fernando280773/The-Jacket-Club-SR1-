@@ -1,3 +1,4 @@
+import "server-only";
 import type Stripe from "stripe";
 import { adminClient } from "./admin";
 import { stripe } from "./stripe";
