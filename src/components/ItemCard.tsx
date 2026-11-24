@@ -76,10 +76,8 @@ export function ItemCard({ item }: { item: MenuItem }) {
           </p>
         )}
       </div>
-      {/* Sold out: only the photo fades, so the name, price and allergens stay readable. */}
-      <div className={soldOut ? "grayscale" : undefined}>
-        <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
-      </div>
+      {/* Sold out is shown by the label and the crossed-out price; nothing is faded, so everything stays readable. */}
+      <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
     </article>
   );
 }
@@ -92,9 +90,7 @@ export function FavouriteCard({ item }: { item: MenuItem }) {
       className="relative flex w-40 shrink-0 snap-start flex-col gap-2"
     >
       {item.isAvailable && <OpenItemButton code={item.code} name={item.name} />}
-      <div className={item.isAvailable ? undefined : "grayscale"}>
-        <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
-      </div>
+      <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
       <h3 className="text-sm font-bold leading-snug">{item.name}</h3>
       <div className="flex items-center gap-2">
         <span className={`text-sm font-bold ${item.isAvailable ? "text-club-green" : "text-club-muted line-through"}`}>{formatPence(item.pricePence)}</span>
