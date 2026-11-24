@@ -576,9 +576,7 @@
         "G_BMEAL"
       ],
       "allergens": [
-        "Celery",
-        "Gluten",
-        "Soya"
+        "Gluten"
       ],
       "halal": true,
       "description": "Bite-size spicy halal popcorn chicken made from whole chicken fillet, with a dip",
@@ -626,9 +624,7 @@
         "G_ADDCAN"
       ],
       "allergens": [
-        "Celery",
-        "Gluten",
-        "Soya"
+        "Gluten"
       ],
       "halal": true,
       "description": "3 crispy chicken strips, a regular popcorn chicken, skin-on fries and a dip",
