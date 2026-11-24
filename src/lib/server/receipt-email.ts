@@ -42,3 +42,28 @@ export async function sendReceiptOnce(orderId: string, siteUrl: string): Promise
     return "failed";
   }
 }
+
+/**
+ * Staff "Resend receipt": sends the receipt again to the email the customer gave.
+ * At most one resend per order per 10 minutes (Resend drops repeats with the same idempotency key).
+ */
+export async function resendReceipt(orderId: string, siteUrl: string): Promise<Exclude<SendResult, "already_sent">> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return "not_configured";
+  const order = await orderById(orderId);
+  if (!order) return "failed";
+  const email = order.customers?.email;
+  if (!email) return "no_email";
+  const { subject, html, text } = buildReceipt(order, `${siteUrl}/order/${order.access_token}`);
+  const window10 = Math.floor(Date.now() / 600_000);
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `receipt-resend-${orderId}-${window10}` },
+      body: JSON.stringify({ from: FROM(), to: [email], reply_to: "info@thejacketclubsr1.com", subject: `Copy: ${subject}`, html, text }),
+    });
+    return res.ok ? "sent" : "failed";
+  } catch {
+    return "failed";
+  }
+}

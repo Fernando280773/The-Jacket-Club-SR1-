@@ -7,11 +7,13 @@ import { HoursTab } from "./HoursTab";
 import { MenuTab } from "./MenuTab";
 import { TodayTab } from "./TodayTab";
 import { QrTab } from "./QrTab";
+import { HistoryTab } from "./HistoryTab";
 
-type Tab = "today" | "menu" | "bookings" | "hours" | "stock" | "qr";
+type Tab = "today" | "history" | "menu" | "bookings" | "hours" | "stock" | "qr";
 
 const OWNER_TABS: { id: Tab; label: string }[] = [
   { id: "today", label: "Today" },
+  { id: "history", label: "History" },
   { id: "menu", label: "Menu" },
   { id: "bookings", label: "Bookings" },
   { id: "hours", label: "Opening hours" },
@@ -19,6 +21,7 @@ const OWNER_TABS: { id: Tab; label: string }[] = [
 ];
 const KITCHEN_TABS: { id: Tab; label: string }[] = [
   { id: "stock", label: "Sold out" },
+  { id: "history", label: "History" },
   { id: "bookings", label: "Bookings" },
 ];
 
@@ -79,6 +82,7 @@ function AdminShell({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
       <div className="flex-1 px-4 py-4">
         {tab === "today" && isOwner && <TodayTab staff={staff} />}
         {tab === "qr" && isOwner && <QrTab />}
+        {tab === "history" && <HistoryTab staff={staff} />}
         {tab === "menu" && isOwner && <MenuTab staff={staff} mode="owner" />}
         {tab === "hours" && isOwner && <HoursTab staff={staff} />}
         {tab === "bookings" && <BookingsTab staff={staff} />}
