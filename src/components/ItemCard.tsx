@@ -30,7 +30,7 @@ function PhotoPlaceholder({ name, size }: { name: string; size: "sm" | "lg" }) {
   return (
     <div
       aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center rounded-xl bg-club-cream font-display text-club-green/60 ${
+      className={`flex shrink-0 items-center justify-center rounded-xl bg-club-cream font-display text-club-green ${
         size === "lg" ? "h-28 w-full text-3xl" : "h-20 w-20 text-xl"
       }`}
     >
