@@ -55,7 +55,7 @@ test("signed out: sign in by email link (no password) or Google", async ({ page 
   await page.goto("/account");
   await expect(page.getByTestId("google-sign-in")).toBeVisible();
   await page.getByTestId("send-link").click();
-  await expect(page.getByRole("alert")).toContainText("valid email");
+  await expect(page.locator("#account-error")).toContainText("valid email");
   await page.getByLabel("Email").fill("sam@example.com");
   await page.getByTestId("send-link").click();
   await expect(page.getByTestId("link-sent")).toContainText("sam@example.com");
