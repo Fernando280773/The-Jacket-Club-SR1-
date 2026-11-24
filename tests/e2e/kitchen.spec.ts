@@ -80,6 +80,11 @@ test("the board shows orders in columns and moves them on a tap", async ({ page 
   await expect.poll(() => rpcCalls).toContainEqual({ p_order_id: "a", p_from: "received", p_to: "preparing" });
 
   const ready = page.getByTestId("col-preparing").locator('[data-number="1012"]');
+  // Collections are packed: Ready stays locked until every item is ticked.
+  await expect(ready.getByTestId("order-action")).toBeDisabled();
+  await expect(ready.getByTestId("order-action")).toHaveText("Tick every item to pack");
+  await ready.getByTestId("pack-item").check();
+  await expect(ready.getByTestId("order-action")).toHaveText("Ready");
   await ready.getByTestId("order-action").click();
   await page.getByTestId("col-ready").locator('[data-number="1012"]').getByTestId("order-action").click();
   await expect(page.getByTestId("done-order")).toHaveCount(2);
@@ -87,4 +92,22 @@ test("the board shows orders in columns and moves them on a tap", async ({ page 
 
   await page.getByTestId("done-order").first().getByRole("button", { name: "Undo" }).click();
   await expect(page.getByTestId("col-ready").locator('[data-number="1012"]')).toBeVisible();
+});
+
+test("table orders skip the packing checklist", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await fakeSupabase(page);
+  await page.goto("/kitchen");
+  const table = page.getByTestId("col-new").locator('[data-number="1011"]');
+  await table.getByTestId("order-action").click();
+  const preparing = page.getByTestId("col-preparing").locator('[data-number="1011"]');
+  await expect(preparing.getByTestId("pack-item")).toHaveCount(0);
+  await expect(preparing.getByTestId("order-action")).toBeEnabled();
+});
+
+test("the kitchen has a History button", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await fakeSupabase(page);
+  await page.goto("/kitchen");
+  await expect(page.getByTestId("history-link")).toHaveAttribute("href", "/admin?tab=history");
 });

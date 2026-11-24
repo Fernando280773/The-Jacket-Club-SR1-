@@ -24,9 +24,12 @@ describe("item card", () => {
     expect(html).toContain("Contains: Milk");
     expect(html).not.toContain("Sold out");
   });
-  it("shows Sold out and greys the card when unavailable", () => {
+  it("shows Sold out with a crossed-out price, without fading the text, when unavailable", () => {
     const html = renderToStaticMarkup(<ItemCard item={{ ...classic, isAvailable: false }} />);
     expect(html).toContain("Sold out");
-    expect(html).toContain("grayscale");
+    expect(html).toContain("line-through");
+    expect(html).toContain('data-sold-out="true"');
+    expect(html).not.toContain("opacity-50");
+    expect(html).not.toContain("Choose "); // can't be opened or added
   });
 });

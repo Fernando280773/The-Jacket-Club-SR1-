@@ -2,6 +2,7 @@
 
 import { milesText } from "@/lib/delivery";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { allPacked, needsPacking } from "@/lib/history";
 import type { OrderStatus } from "@/lib/order-status";
 import {
   actionLabel,
@@ -218,6 +219,9 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
           <span data-testid="kitchen-connection" className={`rounded-full px-3 py-1 font-bold ${live ? "bg-club-mint text-club-green" : "bg-red-600 text-white"}`}>
             {live ? "Live" : "Reconnecting…"}
           </span>
+          <a href="/admin?tab=history" data-testid="history-link" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
+            History
+          </a>
           <a href="/admin?tab=bookings" data-testid="bookings-link" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
             Bookings
           </a>
@@ -345,6 +349,10 @@ function OrderCard({
   const level = ageLevel(mins);
   const label = actionLabel(o.type, o.status);
   const back = previousStatus(o.type, o.status);
+  const packing = needsPacking(o.type, o.status);
+  const [packed, setPacked] = usePacked(o.id);
+  const lineIds = o.order_lines.map((l) => l.id);
+  const blocked = packing && !allPacked(lineIds, packed);
   return (
     <article data-testid="kitchen-order" data-number={o.number} data-age={level} className={`flex flex-col gap-2 rounded-2xl border-2 bg-white p-3 shadow-sm ${AGE_STYLE[level]}`}>
       <div className="flex items-start justify-between gap-2">
@@ -359,10 +367,30 @@ function OrderCard({
       <ul className="flex flex-col gap-1 border-t border-club-line pt-2">
         {o.order_lines.map((l) => (
           <li key={l.id}>
-            <span className="text-lg font-bold">
-              {l.quantity} × {l.item_name}
-            </span>
-            {l.order_line_options.length > 0 && <span className="block text-base">{optionsText(l.order_line_options)}</span>}
+            {packing ? (
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  data-testid="pack-item"
+                  checked={packed.has(l.id)}
+                  onChange={(e) => setPacked(l.id, e.target.checked)}
+                  className="mt-1 h-6 w-6 shrink-0 accent-club-green"
+                />
+                <span>
+                  <span className="text-lg font-bold">
+                    {l.quantity} × {l.item_name}
+                  </span>
+                  {l.order_line_options.length > 0 && <span className="block text-base">{optionsText(l.order_line_options)}</span>}
+                </span>
+              </label>
+            ) : (
+              <>
+                <span className="text-lg font-bold">
+                  {l.quantity} × {l.item_name}
+                </span>
+                {l.order_line_options.length > 0 && <span className="block text-base">{optionsText(l.order_line_options)}</span>}
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -401,11 +429,36 @@ function OrderCard({
           </button>
         )}
         {label && (
-          <button type="button" data-testid="order-action" disabled={busy} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="flex-1 rounded-xl bg-club-green px-4 py-3 text-lg font-bold text-club-paper disabled:opacity-40">
-            {label}
+          <button type="button" data-testid="order-action" disabled={busy || blocked} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="flex-1 rounded-xl bg-club-green px-4 py-3 text-lg font-bold text-club-paper disabled:opacity-40">
+            {blocked ? "Tick every item to pack" : label}
           </button>
         )}
       </div>
     </article>
   );
+}
+
+/** Which items on an order have been ticked as packed. Kept on this tablet so a page reload keeps the ticks. */
+function usePacked(orderId: string): [ReadonlySet<string>, (lineId: string, on: boolean) => void] {
+  const key = `jc-packed-${orderId}`;
+  const [packed, setPackedState] = useState<ReadonlySet<string>>(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(key) ?? "[]") as string[]);
+    } catch {
+      return new Set();
+    }
+  });
+  const set = (lineId: string, on: boolean) =>
+    setPackedState((prev) => {
+      const next = new Set(prev);
+      if (on) next.add(lineId);
+      else next.delete(lineId);
+      try {
+        localStorage.setItem(key, JSON.stringify([...next]));
+      } catch {
+        /* storage blocked: ticks still work until reload */
+      }
+      return next;
+    });
+  return [packed, set];
 }
