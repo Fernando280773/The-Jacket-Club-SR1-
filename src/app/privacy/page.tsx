@@ -37,6 +37,10 @@ export default function PrivacyPage() {
           <strong>Payments</strong>: Stripe processes your card. We receive a payment reference and the amount, never your full card number.
         </li>
         <li>
+          <strong>If you make an account</strong>: your email, name, mobile, any delivery addresses you choose to save, whether you want offers by email (and when you
+          said so), and your past orders. If you sign in with Google, Google tells us your name and email address only.
+        </li>
+        <li>
           <strong>Staff</strong>: for our staff and drivers, their name, sign-in email, role and the orders they handled.
         </li>
       </ul>
@@ -55,7 +59,15 @@ export default function PrivacyPage() {
           is needed.
         </li>
       </ul>
-      <p>We don&apos;t send marketing. If we start a members&apos; club or offers by email or text, we&apos;ll only send them if you opt in.</p>
+      <ul>
+        <li>
+          <strong>To run your account</strong>: show your orders, let you order again and suggest things you might like based on your own orders (simple rules such as
+          &quot;your usual&quot;, not profiling): this is needed for the service you asked for.
+        </li>
+        <li>
+          <strong>Offers by email</strong>: only if you tick the box in your account. You can untick it at any time, and every email has a link to stop them.
+        </li>
+      </ul>
 
       <h2>Who we share it with</h2>
       <p>We use these providers to run the service. They act on our instructions and must keep your information safe:</p>
@@ -75,6 +87,12 @@ export default function PrivacyPage() {
         <li>
           <strong>Mapbox</strong>: looks up delivery addresses and road distance.
         </li>
+        <li>
+          <strong>Google</strong>: only if you choose &quot;Continue with Google&quot; to sign in.
+        </li>
+        <li>
+          <strong>Cloudflare</strong>: checks the sign-in form isn&apos;t being used by a robot.
+        </li>
       </ul>
       <p>
         Some of these companies are based in the United States. Where your information is handled outside the UK, it&apos;s protected by the UK&apos;s approved safeguards
@@ -85,6 +103,10 @@ export default function PrivacyPage() {
       <h2>How long we keep it</h2>
       <ul>
         <li>Orders, bookings and payment records: 6 years after the end of the financial year they belong to, as tax law requires. Then we delete them.</li>
+        <li>
+          Your account: until you delete it in your account page (or ask us to). Your login, saved details and addresses go straight away; past order records stay for the
+          6 years above but are no longer linked to you.
+        </li>
         <li>Staff accounts: while they work with us, plus 1 year.</li>
         <li>
           What&apos;s stored on your own device (your basket and last order) stays until you clear it. See <Link href="/cookies">cookies and storage</Link>.

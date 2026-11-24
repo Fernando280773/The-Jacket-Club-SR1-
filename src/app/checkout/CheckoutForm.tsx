@@ -12,6 +12,8 @@ import { DeliveryAddress } from "@/components/DeliveryAddress";
 import type { DeliveryQuote } from "@/lib/server/delivery";
 import { priceBasketOnServer } from "../basket/actions";
 import { startCheckout, tableDepositPreview } from "./actions";
+import type { Account } from "@/lib/account";
+import { customerClient, customerToken } from "@/lib/customer-client";
 
 const inputClass = "w-full rounded-xl border border-club-line bg-white px-4 py-3 text-base outline-none focus:border-club-green";
 
@@ -31,7 +33,7 @@ function Field({ id, label, error, children }: { id: string; label: string; erro
   );
 }
 
-export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; deliverySlots: Slot[] }) {
+export function CheckoutForm({ slots, deliverySlots, shopId }: { slots: Slot[]; deliverySlots: Slot[]; shopId: string }) {
   const basket = useBasket();
   const [priced, setPriced] = useState<PricedBasket | null>(null);
   const [name, setName] = useState("");
@@ -45,6 +47,22 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
   const [quote, setQuote] = useState<DeliveryQuote | null>(null);
   const [deliverAt, setDeliverAt] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
+  const [account, setAccount] = useState<Account | null>(null);
+  const [saveAddress, setSaveAddress] = useState(true);
+
+  // Signed in: fill in their details and offer their saved addresses.
+  useEffect(() => {
+    customerToken().then(async (token) => {
+      if (!token) return;
+      const { data } = await customerClient().rpc("customer_account", { p_shop_id: shopId });
+      if (!data) return;
+      const acc = data as Account;
+      setAccount(acc);
+      setName((v) => v || acc.name);
+      setPhone((v) => v || acc.phone);
+      setEmail((v) => v || acc.email);
+    });
+  }, [shopId]);
 
   const lines = basket?.lines;
   useEffect(() => {
@@ -102,6 +120,8 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
       name,
       phone,
       email,
+      accessToken: account ? await customerToken() : undefined,
+      saveAddress: type === "delivery" && saveAddress,
     }).catch(() => ({
       ok: false as const,
       error: "Something went wrong. Please try again.",
@@ -166,7 +186,13 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
         {type === "table" && basket.table && <p data-testid="table-number" className="rounded-xl bg-club-mint px-4 py-3 font-bold text-club-green">Table {basket.table.number}: we&apos;ll bring your order to you.</p>}
         {type === "delivery" && (
           <>
-            <DeliveryAddress onQuote={setQuote} />
+            <DeliveryAddress onQuote={setQuote} savedAddresses={account?.addresses.map((a) => a.address) ?? []} />
+            {account && basket.delivery?.label && !account.addresses.some((a) => a.address === basket.delivery?.label) && (
+              <label className="flex items-center gap-3 text-sm font-bold">
+                <input type="checkbox" data-testid="save-address" className="h-5 w-5" checked={saveAddress} onChange={(e) => setSaveAddress(e.target.checked)} />
+                Save this address to my account
+              </label>
+            )}
             {deliverySlots.length > 0 ? (
               <Field id="deliverAt" label="Delivery time (today)" error={errors.pickupAt}>
                 <select id="deliverAt" value={deliverAt} onChange={(e) => setDeliverAt(e.target.value)} className={inputClass}>
@@ -197,6 +223,11 @@ export function CheckoutForm({ slots, deliverySlots }: { slots: Slot[]; delivery
       </section>
 
       <section aria-label="Your details" className="flex flex-col gap-3">
+        {account ? (
+          <p data-testid="signed-in-as" className="text-sm">Signed in as <strong>{account.email}</strong>. This order will show in <Link href="/account" className="underline">your account</Link>.</p>
+        ) : (
+          <p data-testid="sign-in-prompt" className="text-sm"><Link href="/account" className="font-bold underline">Sign in</Link> to fill this in for you and keep your orders together. Or just carry on as a guest.</p>
+        )}
         <Field id="name" label="Name" error={errors.name}>
           <input id="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} aria-invalid={!!errors.name} />
         </Field>

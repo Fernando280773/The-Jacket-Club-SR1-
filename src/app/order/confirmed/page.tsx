@@ -6,6 +6,7 @@ import { RememberOrder } from "@/components/YourOrderBar";
 import { fulfilSession } from "@/lib/server/fulfil";
 import { orderById } from "@/lib/server/orders";
 import { sendReceiptOnce } from "@/lib/server/receipt-email";
+import { AccountPrompt } from "./AccountPrompt";
 import { ClearBasket } from "./ClearBasket";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +69,7 @@ export default async function OrderConfirmedPage({ searchParams }: { searchParam
           </Link>
         )}
       </div>
+      <AccountPrompt />
       {order && (
         <section aria-label="Your order" className="mt-6 rounded-2xl bg-club-cream p-4">
           <ul className="flex flex-col gap-2 text-sm">

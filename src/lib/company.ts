@@ -28,4 +28,4 @@ export const LEGAL_PAGES = [
 ] as const;
 
 /** Date the legal pages were last updated (shown on each page). */
-export const LEGAL_UPDATED = "23 November 2026";
+export const LEGAL_UPDATED = "24 November 2026";

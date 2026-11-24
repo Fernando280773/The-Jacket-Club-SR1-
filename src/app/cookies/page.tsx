@@ -20,9 +20,15 @@ export default function CookiesPage() {
           <strong>Your last order</strong>: its number and private tracking link, so the menu can show &ldquo;Your order&rdquo; and its progress.
         </li>
         <li>
+          <strong>Your account sign-in</strong>: only if you sign in to your account, to keep you signed in on this device until you sign out.
+        </li>
+        <li>
           <strong>Staff sign-in</strong>: only on our kitchen, admin and driver screens, to keep staff signed in.
         </li>
       </ul>
+      <p>
+        If you use the sign-in form, Cloudflare&apos;s security check may set its own strictly necessary cookie to tell people from robots.
+      </p>
       <p>
         These are kept in your browser&apos;s storage, are strictly necessary for the services you ask for, and are never used to track you. Under UK law (PECR) they don&apos;t
         need your consent. You can clear them at any time in your browser settings; your basket will be emptied.

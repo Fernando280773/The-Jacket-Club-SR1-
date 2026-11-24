@@ -52,6 +52,9 @@ export default async function MenuPage() {
           <h1 className="font-display text-xl leading-tight text-club-green">{menu.shopName}</h1>
           <OpenStatus hours={menu.hours} />
         </div>
+        <Link href="/account" data-testid="account-link" className="ml-auto shrink-0 rounded-full bg-club-cream px-4 py-2 text-sm font-bold">
+          Account
+        </Link>
       </header>
 
       <OrderTypes />
