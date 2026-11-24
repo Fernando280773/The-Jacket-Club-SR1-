@@ -54,14 +54,15 @@ export function ItemCard({ item }: { item: MenuItem }) {
       data-testid="item-card"
       data-code={item.code}
       aria-label={item.name}
-      className={`relative flex gap-3 border-b border-club-line py-4 ${soldOut ? "opacity-50 grayscale" : ""}`}
+      data-sold-out={soldOut ? "true" : undefined}
+      className="relative flex gap-3 border-b border-club-line py-4"
     >
       {!soldOut && <OpenItemButton code={item.code} name={item.name} />}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <h3 className="font-bold leading-snug">{item.name}</h3>
         {item.description && <p className="text-sm text-club-muted">{item.description}</p>}
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          <span data-testid="price" className="font-bold text-club-green">
+          <span data-testid="price" className={`font-bold ${soldOut ? "text-club-muted line-through" : "text-club-green"}`}>
             {formatPence(item.pricePence)}
           </span>
           {item.isHalal && <HalalBadge />}
@@ -75,7 +76,10 @@ export function ItemCard({ item }: { item: MenuItem }) {
           </p>
         )}
       </div>
-      <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
+      {/* Sold out: only the photo fades, so the name, price and allergens stay readable. */}
+      <div className={soldOut ? "opacity-50 grayscale" : undefined}>
+        <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
+      </div>
     </article>
   );
 }
@@ -85,14 +89,16 @@ export function FavouriteCard({ item }: { item: MenuItem }) {
     <article
       data-testid="favourite-card"
       aria-label={item.name}
-      className={`relative flex w-40 shrink-0 snap-start flex-col gap-2 ${item.isAvailable ? "" : "opacity-50 grayscale"}`}
+      className="relative flex w-40 shrink-0 snap-start flex-col gap-2"
     >
       {item.isAvailable && <OpenItemButton code={item.code} name={item.name} />}
-      <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
+      <div className={item.isAvailable ? undefined : "opacity-50 grayscale"}>
+        <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
+      </div>
       <h3 className="text-sm font-bold leading-snug">{item.name}</h3>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-bold text-club-green">{formatPence(item.pricePence)}</span>
-        {!item.isAvailable && <span className="text-[11px] font-bold uppercase">Sold out</span>}
+        <span className={`text-sm font-bold ${item.isAvailable ? "text-club-green" : "text-club-muted line-through"}`}>{formatPence(item.pricePence)}</span>
+        {!item.isAvailable && <span className="rounded-full bg-club-ink px-2 py-0.5 text-[11px] font-bold uppercase text-club-paper">Sold out</span>}
       </div>
     </article>
   );
