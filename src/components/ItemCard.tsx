@@ -77,7 +77,7 @@ export function ItemCard({ item }: { item: MenuItem }) {
         )}
       </div>
       {/* Sold out: only the photo fades, so the name, price and allergens stay readable. */}
-      <div className={soldOut ? "opacity-50 grayscale" : undefined}>
+      <div className={soldOut ? "grayscale" : undefined}>
         <ItemPhoto name={item.name} url={item.photoUrl} size="sm" />
       </div>
     </article>
@@ -92,7 +92,7 @@ export function FavouriteCard({ item }: { item: MenuItem }) {
       className="relative flex w-40 shrink-0 snap-start flex-col gap-2"
     >
       {item.isAvailable && <OpenItemButton code={item.code} name={item.name} />}
-      <div className={item.isAvailable ? undefined : "opacity-50 grayscale"}>
+      <div className={item.isAvailable ? undefined : "grayscale"}>
         <ItemPhoto name={item.name} url={item.photoUrl} size="lg" />
       </div>
       <h3 className="text-sm font-bold leading-snug">{item.name}</h3>
