@@ -169,8 +169,15 @@ function Dashboard({ shopId, menu }: { shopId: string; menu: Pick<Menu, "categor
     router.push("/basket");
   }
 
+  // This device only: signing out here must never end the same person's staff login elsewhere.
   async function signOut() {
-    await db.auth.signOut();
+    const { error } = await db.auth.signOut({ scope: "local" });
+    if (error) {
+      try {
+        window.localStorage.removeItem("jc-customer-auth");
+      } catch {}
+      window.location.reload();
+    }
   }
 
   if (error) {
@@ -369,7 +376,7 @@ function DeleteAccount() {
     const db = customerClient();
     const { error: err } = await db.rpc("customer_delete_account");
     if (err) return setError("We couldn't delete your account. Please email us and we'll do it for you.");
-    await db.auth.signOut();
+    await db.auth.signOut({ scope: "local" });
   }
 
   return (
