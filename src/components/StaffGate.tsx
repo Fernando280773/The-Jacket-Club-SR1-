@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { staffClient } from "@/lib/staff-client";
+import { Turnstile } from "./Turnstile";
 
 export type StaffRole = "owner" | "kitchen" | "driver";
 export type Staff = { shopId: string; name: string; role: StaffRole };
@@ -78,13 +79,23 @@ function LoginForm({ title }: { title: string }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [show, setShow] = useState(false);
+  const [captcha, setCaptcha] = useState<string | undefined>(undefined);
+  const [captchaRound, setCaptchaRound] = useState(0);
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (siteKey && !captcha) {
+      setError("Please wait a moment for the security check, then try again");
+      return;
+    }
     setBusy(true);
     setError("");
-    const { error } = await staffClient().auth.signInWithPassword({ email: email.trim(), password });
+    const { error } = await staffClient().auth.signInWithPassword({ email: email.trim(), password, options: { captchaToken: captcha } });
     setBusy(false);
+    // Each bot-check token works once: get a fresh one for the next try.
+    setCaptcha(undefined);
+    setCaptchaRound((n) => n + 1);
     if (error) setError(error.message === "Invalid login credentials" ? "Email or password is wrong" : "Couldn't sign in. Check the Wi-Fi and try again.");
   };
 
@@ -106,6 +117,7 @@ function LoginForm({ title }: { title: string }) {
           <input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} className="h-5 w-5 accent-club-green" />
           Show password
         </label>
+        {siteKey && <Turnstile key={captchaRound} siteKey={siteKey} onToken={setCaptcha} />}
         {error && (
           <p role="alert" className="text-sm font-bold text-red-700">
             {error}
