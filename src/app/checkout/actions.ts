@@ -27,6 +27,10 @@ export type StartCheckoutInput = {
   name: string;
   phone: string;
   email: string;
+  /** The signed-in customer's login token, so the order joins their account. */
+  accessToken?: string;
+  /** Delivery only: save this address to the customer's account. */
+  saveAddress?: boolean;
 };
 
 export type StartCheckoutResult = { ok: true; url: string } | { ok: false; error: string; fieldErrors?: Record<string, string> };
@@ -135,6 +139,13 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     }
   }
 
+  // A signed-in customer: checked with Supabase, never trusted from the browser.
+  let accountUserId = "";
+  if (input.accessToken) {
+    const { data: who } = await db.auth.getUser(String(input.accessToken)).catch(() => ({ data: { user: null } }));
+    if (who.user?.email_confirmed_at) accountUserId = who.user.id;
+  }
+
   const h = await headers();
   const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("x-forwarded-host") ?? h.get("host")}`;
   const metadata = {
@@ -148,6 +159,8 @@ export async function startCheckout(input: StartCheckoutInput): Promise<StartChe
     deposit_booking_id: deposit?.bookingId ?? "",
     deposit_credit_pence: deposit ? String(deposit.creditPence) : "",
     staff_test: staffTest ? "1" : "",
+    account_user_id: accountUserId,
+    save_address: accountUserId && delivery && input.saveAddress ? "1" : "",
   };
   try {
     // A table booking's deposit comes off once, as a one-off Stripe discount.

@@ -9,7 +9,7 @@ import { quoteDelivery, searchDeliveryAddress } from "@/app/basket/delivery-acti
 import { useBasket } from "./BasketProvider";
 
 /** Address search and delivery fee for the basket and checkout. Saves only the chosen address text on the phone. */
-export function DeliveryAddress({ onQuote }: { onQuote?: (q: DeliveryQuote | null) => void }) {
+export function DeliveryAddress({ onQuote, savedAddresses = [] }: { onQuote?: (q: DeliveryQuote | null) => void; savedAddresses?: string[] }) {
   const basket = useBasket();
   const saved = basket?.delivery?.label ?? "";
   const [query, setQuery] = useState("");
@@ -65,7 +65,18 @@ export function DeliveryAddress({ onQuote }: { onQuote?: (q: DeliveryQuote | nul
           </button>
         </div>
       ) : (
-        <div className="relative">
+        <div className="relative flex flex-col gap-2">
+          {savedAddresses.length > 0 && (
+            <ul aria-label="Your saved addresses" className="flex flex-col gap-2">
+              {savedAddresses.map((label) => (
+                <li key={label}>
+                  <button type="button" data-testid="saved-address-option" onClick={() => choose({ label } as AddressMatch)} className="w-full rounded-xl bg-white px-4 py-3 text-left text-sm font-bold">
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
           <input
             type="text"
             data-testid="address-search"
@@ -77,7 +88,7 @@ export function DeliveryAddress({ onQuote }: { onQuote?: (q: DeliveryQuote | nul
             className="w-full rounded-xl border border-club-line bg-white px-4 py-3 text-base outline-none focus:border-club-green"
           />
           {matches.length > 0 && (
-            <ul role="listbox" className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-club-line bg-white shadow-lg">
+            <ul role="listbox" className="absolute top-full z-10 mt-1 w-full overflow-hidden rounded-xl border border-club-line bg-white shadow-lg">
               {matches.map((m) => (
                 <li key={m.label}>
                   <button type="button" role="option" aria-selected="false" data-testid="address-option" onClick={() => choose(m)} className="w-full px-4 py-3 text-left text-sm hover:bg-club-cream">

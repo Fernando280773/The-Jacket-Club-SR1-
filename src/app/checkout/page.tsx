@@ -7,6 +7,7 @@ import { pickupSlots } from "@/lib/slots";
 import { orderingOpen } from "@/lib/server/ordering";
 import { staffTestActive } from "@/lib/server/staff-test";
 import { CheckoutForm } from "./CheckoutForm";
+import { publicClient, SHOP_SLUG } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Checkout · The Jacket Club SR1" };
@@ -17,6 +18,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
   if (!result.ok) throw new Error(result.error);
   const now = new Date();
   const staffTest = await staffTestActive();
+  const { data: shop } = await publicClient().from("shops").select("id").eq("slug", SHOP_SLUG).single();
 
   return (
     <BasketProvider menu={result.menu}>
@@ -42,7 +44,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
             We&apos;re not taking online orders right now.{result.menu.pausedMessage ? ` ${result.menu.pausedMessage}` : ""}
           </p>
         ) : orderingOpen(now, true, staffTest) ? (
-          <CheckoutForm slots={pickupSlots(result.menu.hours, now)} deliverySlots={deliverySlots(result.menu.hours, now)} />
+          <CheckoutForm shopId={shop?.id ?? ""} slots={pickupSlots(result.menu.hours, now)} deliverySlots={deliverySlots(result.menu.hours, now)} />
         ) : (
           <p className="py-8 text-center font-bold">Ordering opens 10 December.</p>
         )}

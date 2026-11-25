@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 
 // Automated WCAG 2.1 AA scan of the customer pages. Fails on serious or critical problems
 // (missing labels, unreadable contrast, buttons with no name, and so on).
-const pages = ["/", "/basket", "/book", "/terms", "/privacy", "/refunds", "/cookies", "/allergens", "/kitchen", "/driver"];
+const pages = ["/", "/account", "/basket", "/book", "/terms", "/privacy", "/refunds", "/cookies", "/allergens", "/kitchen", "/driver"];
 
 for (const path of pages) {
   test(`no serious accessibility problems on ${path}`, async ({ page }) => {

@@ -36,8 +36,27 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
     const row = (Array.isArray(data) ? data[0] : data) as { order_id: string; order_number: number; created: boolean } | undefined;
     if (!row) return { ok: false, reason: "error", message: "Order was not created" };
     if (m.staff_test === "1" && row.created) await adminClient().from("orders").update({ is_staff_test: true }).eq("id", row.order_id);
+    if (m.account_user_id && row.created) await linkToAccount(row.order_id, m.account_user_id, m.save_address === "1");
     return { ok: true, orderId: row.order_id, orderNumber: row.order_number, created: row.created };
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : String(e) };
   }
+}
+
+/** Joins a paid order to the signed-in customer's account and, if they asked, saves the delivery address. */
+async function linkToAccount(orderId: string, authUserId: string, saveAddress: boolean) {
+  const db = adminClient();
+  const { data: order } = await db.from("orders").select("shop_id, customer_id, deliveries(address_text, postcode)").eq("id", orderId).maybeSingle();
+  if (!order?.customer_id) return;
+  await db.from("customers").update({ auth_user_id: authUserId }).eq("id", order.customer_id).is("auth_user_id", null);
+  const delivery = (Array.isArray(order.deliveries) ? order.deliveries[0] : order.deliveries) as { address_text: string; postcode: string } | null;
+  if (!saveAddress || !delivery?.address_text) return;
+  const { data: account } = await db.from("customer_accounts").select("id").eq("shop_id", order.shop_id).eq("auth_user_id", authUserId).maybeSingle();
+  if (!account) return;
+  await db
+    .from("saved_addresses")
+    .upsert(
+      { shop_id: order.shop_id, account_id: account.id, address_text: delivery.address_text.slice(0, 200), postcode: (delivery.postcode ?? "").slice(0, 10) },
+      { onConflict: "account_id,address_text", ignoreDuplicates: true },
+    );
 }
