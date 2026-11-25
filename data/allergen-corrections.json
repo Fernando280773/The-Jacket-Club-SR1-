@@ -2,10 +2,30 @@
   "note": "Allergen fixes made after checking supplier labels. They apply on top of data/menu.json (the original Menu Sheet snapshot), which stays unchanged.",
   "corrections": [
     {
-      "codes": ["H02", "H05"],
-      "add": ["Celery", "Soya"],
+      "codes": [
+        "H02",
+        "H05"
+      ],
+      "add": [
+        "Celery",
+        "Soya"
+      ],
       "source": "JJ Foodservice CHI490 JJ Halal Whole Muscle Southern Fried Poppin Chicken, product page checked 24 Nov 2026",
       "migration": "20261124070000_allergen_label_fixes.sql"
+    },
+    {
+      "codes": [
+        "H03",
+        "H04",
+        "H05",
+        "R05"
+      ],
+      "add": [
+        "Milk",
+        "Eggs"
+      ],
+      "source": "JJ Foodservice CHI264 JJ Halal Whole Muscle Crispy Southern Fried Chicken Strips 1x2kg (contains wheat, milk, egg), product page checked 25 Nov 2026",
+      "migration": "20261125210000_jj_strips_allergens.sql"
     }
   ]
 }
