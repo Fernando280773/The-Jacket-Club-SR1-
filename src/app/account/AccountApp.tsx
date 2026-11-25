@@ -11,7 +11,7 @@ import type { Menu } from "@/lib/menu";
 import { formatPence } from "@/lib/money";
 import { currentStep, stepsFor } from "@/lib/order-status";
 import { pricingMenuFrom } from "@/lib/pricing";
-import { Turnstile } from "./Turnstile";
+import { Turnstile } from "@/components/Turnstile";
 
 const inputClass = "w-full rounded-xl border border-club-line bg-white px-4 py-3 text-base outline-none focus:border-club-green";
 const buttonClass = "rounded-2xl bg-club-green px-5 py-3 font-bold text-club-paper disabled:opacity-60";
@@ -43,6 +43,7 @@ function SignIn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [captcha, setCaptcha] = useState<string | undefined>(undefined);
+  const [captchaRound, setCaptchaRound] = useState(0);
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   async function sendLink(e: React.FormEvent) {
@@ -57,6 +58,9 @@ function SignIn() {
       options: { emailRedirectTo: `${window.location.origin}/account`, shouldCreateUser: true, captchaToken: captcha },
     });
     setBusy(false);
+    // Each bot-check token works once: get a fresh one for the next try.
+    setCaptcha(undefined);
+    setCaptchaRound((n) => n + 1);
     if (err) setError(err.status === 429 ? "Too many tries. Please wait a minute and try again." : "We couldn't send the email. Please try again.");
     else setSent(true);
   }
@@ -102,7 +106,7 @@ function SignIn() {
           onChange={(e) => setEmail(e.target.value)}
           aria-describedby={error ? "account-error" : undefined}
         />
-        {siteKey && <Turnstile siteKey={siteKey} onToken={setCaptcha} />}
+        {siteKey && <Turnstile key={captchaRound} siteKey={siteKey} onToken={setCaptcha} />}
         {error && (
           <p id="account-error" role="alert" className="text-sm font-bold text-red-700">
             {error}
