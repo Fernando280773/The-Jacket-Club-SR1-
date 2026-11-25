@@ -215,7 +215,8 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
     <main className="flex min-h-dvh flex-col bg-club-paper">
       <header className="flex flex-wrap items-center justify-between gap-3 bg-club-green px-4 py-3 text-club-paper">
         <h1 className="font-display text-xl">Kitchen</h1>
-        <div className="flex items-center gap-3 text-sm">
+        {/* Wraps onto a second line on phones, so every button (Sign out too) stays on screen and tappable. */}
+        <div className="flex flex-wrap items-center justify-end gap-2 text-sm">
           <span data-testid="kitchen-connection" className={`rounded-full px-3 py-1 font-bold ${live ? "bg-club-mint text-club-green" : "bg-red-600 text-white"}`}>
             {live ? "Live" : "Reconnecting…"}
           </span>

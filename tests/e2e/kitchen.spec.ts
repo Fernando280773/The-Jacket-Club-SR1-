@@ -34,6 +34,9 @@ async function fakeSupabase(page: Page) {
   const rpcCalls: unknown[] = [];
   await page.addInitScript(
     ([userId]) => {
+      // Sign in once per tab, so a sign-out (and any reload) stays signed out.
+      if (sessionStorage.getItem("jc-test-signed-in")) return;
+      sessionStorage.setItem("jc-test-signed-in", "1");
       const exp = Math.floor(Date.now() / 1000) + 3600;
       localStorage.setItem(
         "jc-staff-auth",
@@ -110,4 +113,13 @@ test("the kitchen has a History button", async ({ page }) => {
   await fakeSupabase(page);
   await page.goto("/kitchen");
   await expect(page.getByTestId("history-link")).toHaveAttribute("href", "/admin?tab=history");
+});
+
+test("sign out works even when the login has already ended on the server", async ({ page }) => {
+  await fakeSupabase(page);
+  // The server says the session is gone (e.g. the same person signed out elsewhere).
+  await page.route("**/auth/v1/logout*", (r) => r.fulfill({ status: 403, json: { code: 403, error_code: "session_not_found", msg: "Session not found" } }));
+  await page.goto("/kitchen");
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page.getByTestId("staff-login")).toBeVisible();
 });

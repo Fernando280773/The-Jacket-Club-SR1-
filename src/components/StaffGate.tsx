@@ -65,9 +65,26 @@ function Centre({ children }: { children: ReactNode }) {
   return <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 px-4 text-center">{children}</main>;
 }
 
+/**
+ * Signs out this device only. If the login has already ended on the server (for example the same
+ * person signed out somewhere else), the device is still cleared, so Sign out always works.
+ */
+export async function staffSignOut() {
+  const auth = staffClient().auth;
+  const { error } = await auth.signOut({ scope: "local" });
+  if (error) {
+    try {
+      window.localStorage.removeItem("jc-staff-auth");
+    } catch {
+      // storage blocked: the reload below still shows the sign-in form once the token expires
+    }
+    window.location.reload();
+  }
+}
+
 function SignOut() {
   return (
-    <button type="button" onClick={() => staffClient().auth.signOut()} className="rounded-xl border border-club-line bg-club-paper px-4 py-2 text-sm font-bold text-club-ink">
+    <button type="button" onClick={staffSignOut} className="rounded-xl border border-club-line bg-club-paper px-4 py-2 text-sm font-bold text-club-ink">
       Sign out
     </button>
   );
