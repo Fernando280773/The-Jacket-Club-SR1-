@@ -1,3 +1,4 @@
+import { siteOrigin } from "@/lib/server/site-origin";
 import { adminClient } from "@/lib/server/admin";
 import { resendReceipt } from "@/lib/server/receipt-email";
 import { staffFromRequest } from "@/lib/server/staff-auth";
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
     return Response.json({ ok: false, error: "Order not found." }, { status: 404 });
   }
 
-  const result = await resendReceipt(orderId, new URL(req.url).origin);
+  const result = await resendReceipt(orderId, siteOrigin(req));
   const messages = { sent: "Receipt sent again.", no_email: "This customer didn't give an email address.", not_configured: "Email isn't set up on this site.", failed: "Couldn't send the email. Try again in a minute." };
   return Response.json({ ok: result === "sent", message: messages[result] }, { status: result === "sent" ? 200 : result === "failed" ? 502 : 200 });
 }

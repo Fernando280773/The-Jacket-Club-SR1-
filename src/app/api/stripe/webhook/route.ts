@@ -1,3 +1,4 @@
+import { siteOrigin } from "@/lib/server/site-origin";
 import { confirmBookingSession, sendBookingEmailOnce } from "@/lib/server/bookings";
 import { fulfilSession } from "@/lib/server/fulfil";
 import { sendReceiptOnce } from "@/lib/server/receipt-email";
@@ -16,13 +17,13 @@ export async function POST(req: Request) {
         // Table booking deposit.
         const b = await confirmBookingSession(session.id);
         if (b.ok) {
-          await sendBookingEmailOnce(b.booking.id, new URL(req.url).origin);
+          await sendBookingEmailOnce(b.booking.id, siteOrigin(req));
           return { ok: true, orderId: b.booking.id, orderNumber: 0, created: true };
         }
         return b.reason === "error" ? { ok: false, reason: "error", message: b.message } : { ok: false, reason: "not_ours", message: b.reason };
       }
       const result = await fulfilSession(session.id);
-      if (result.ok) await sendReceiptOnce(result.orderId, new URL(req.url).origin);
+      if (result.ok) await sendReceiptOnce(result.orderId, siteOrigin(req));
       return result;
     },
   });
