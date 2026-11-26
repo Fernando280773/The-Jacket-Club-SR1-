@@ -38,7 +38,7 @@ export function QrTab() {
   if (error) return <p role="alert">{error}</p>;
   if (!cards) return <p>Loading QR codes…</p>;
 
-  const onLiveAddress = !/vercel\.app$|localhost/.test(window.location.hostname);
+  const onLiveAddress = !/vercel\.app$|localhost|^draft\./.test(window.location.hostname);
 
   return (
     <div className="flex flex-col gap-4">
