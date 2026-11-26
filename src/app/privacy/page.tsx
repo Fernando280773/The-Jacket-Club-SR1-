@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           <strong>Supabase</strong>: our database, hosted in the EU (Ireland).
         </li>
         <li>
-          <strong>Vercel</strong>: runs this website, with servers in Dublin.
+          <strong>Hostinger</strong>: runs this website, with servers in the UK.
         </li>
         <li>
           <strong>Stripe</strong>: card payments and refunds.
