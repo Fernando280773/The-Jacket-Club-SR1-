@@ -21,6 +21,7 @@ import { publicClient, SHOP_SLUG } from "../supabase";
 import { adminClient } from "./admin";
 import { emailConfigured, sendEmail } from "./email";
 import { stripe } from "./stripe";
+import * as Sentry from "@sentry/nextjs";
 
 export type BookingContext = { shopId: string; hours: DayHours[]; rules: BookingRules; tables: BookableTable[] };
 
@@ -209,6 +210,12 @@ export async function sendBookingEmailOnce(bookingId: string, siteUrl: string): 
   return ok ? "sent" : "failed";
 }
 
+/** A failed cancel or refund must never be silent: it goes to the server log and to Sentry (owner's email). */
+function reportRefundFailure(err: unknown, bookingId: string, what: string) {
+  console.error(`Booking ${bookingId}: ${what} failed`, err);
+  Sentry.captureException(err, { tags: { area: "booking-refund" }, extra: { bookingId, what } });
+}
+
 export type CancelResult = { ok: true; refundedPence: number } | { ok: false; error: string };
 
 /** Customer cancels from the Manage booking link: full refund only with enough notice. */
@@ -222,7 +229,8 @@ export async function cancelByCustomer(token: string, now = new Date()): Promise
     const refunded = refundDue(b.starts_at, now, ctx.rules.refundNoticeHours) ? await refundDeposit(b, "Cancelled by customer in time") : 0;
     await adminClient().rpc("close_booking", { p_booking_id: b.id, p_status: "cancelled", p_refunded_pence: refunded, p_note: refunded ? null : "Cancelled late by customer: deposit kept" });
     return { ok: true, refundedPence: refunded };
-  } catch {
+  } catch (err) {
+    reportRefundFailure(err, b.id, "customer cancel");
     return { ok: false, error: "Couldn't cancel right now. Please try again or call us." };
   }
 }
@@ -241,7 +249,8 @@ export async function closeByStaff(bookingId: string, action: "cancel" | "no_sho
       p_note: action === "cancel" ? `Cancelled by ${staffName}` : `No-show (marked by ${staffName})`,
     });
     return { ok: true, refundedPence: refunded };
-  } catch {
+  } catch (err) {
+    reportRefundFailure(err, b.id, `staff ${action}`);
     return { ok: false, error: "Couldn't update the booking. Please try again." };
   }
 }
