@@ -1,5 +1,6 @@
 "use client";
 
+import { ReprintLabels } from "@/components/LabelTools";
 import { useCallback, useEffect, useState } from "react";
 import type { Staff } from "@/components/StaffGate";
 import { ISSUE_ACTIONS, ISSUE_KINDS, issueActionLabel, issueKindLabel, poundsToPence, STATUS_WORDS, ukDate, type IssueAction, type IssueKind } from "@/lib/history";
@@ -395,6 +396,7 @@ function OrderDetail({ orderId, onBack }: { orderId: string; onBack: () => void 
             <button type="button" data-testid="resend-receipt" disabled={!d.has_email || sending} onClick={resend} className="rounded-xl border border-club-line bg-white px-3 py-2 font-bold disabled:opacity-40">
               {d.has_email ? "Resend receipt" : "No email on this order"}
             </button>
+            <ReprintLabels orderId={orderId} />
             {notice && (
               <p role="status" className="text-sm font-bold">
                 {notice}

@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
   // Lets browser code know if it is on the live site or a preview (for error alerts).
   env: { NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV ?? "" },
   poweredByHeader: false,
+  // The label fonts are read from disk when a label is drawn, so they must ship with these routes.
+  outputFileTracingIncludes: { "/api/print/**": ["./assets/label/**"], "/api/staff/label-preview": ["./assets/label/**"] },
   images: {
     // Menu photos uploaded in admin live in Supabase Storage.
     remotePatterns: [{ protocol: "https", hostname: "quuengvoweqzaxiuowkl.supabase.co", pathname: "/storage/v1/object/public/menu-photos/**" }],
