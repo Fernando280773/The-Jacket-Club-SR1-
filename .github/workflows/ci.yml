@@ -36,6 +36,10 @@ jobs:
     name: Browser test
     runs-on: ubuntu-24.04
     needs: code
+    env:
+      # The tests read the real menu. This keeps a "Sold out" tap in the shop from failing them (see e2eFullMenu).
+      # Set for the build too: the menu page is built ahead of time.
+      E2E_FULL_MENU: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
