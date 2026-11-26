@@ -123,3 +123,21 @@ test("sign out works even when the login has already ended on the server", async
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page.getByTestId("staff-login")).toBeVisible();
 });
+
+test("labels: the printer chip shows and an order's labels can be printed again", async ({ page }) => {
+  await fakeSupabase(page);
+  const reprints: unknown[] = [];
+  await page.route("**/rest/v1/rpc/staff_label_status", (r) =>
+    r.fulfill({ json: { enabled: true, types: ["collect", "delivery"], printer_seen_at: new Date().toISOString(), printer_status: "200 OK", waiting: 0, failed_today: 0 } }),
+  );
+  await page.route("**/rest/v1/rpc/enqueue_order_labels", async (r) => {
+    reprints.push(r.request().postDataJSON());
+    await r.fulfill({ json: 2 });
+  });
+  await page.goto("/kitchen");
+  await expect(page.getByTestId("printer-chip")).toHaveText("Labels on");
+  const card = page.getByTestId("kitchen-order").first();
+  await card.getByTestId("reprint-labels").click();
+  await expect(card.getByTestId("reprint-labels")).toHaveText("Sent to printer");
+  expect(reprints[0]).toMatchObject({ p_reprint: true });
+});

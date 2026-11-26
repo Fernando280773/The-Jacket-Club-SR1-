@@ -1,5 +1,6 @@
 "use client";
 
+import { PrinterChip, ReprintLabels } from "@/components/LabelTools";
 import { milesText } from "@/lib/delivery";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { allPacked, needsPacking } from "@/lib/history";
@@ -220,6 +221,7 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
           <span data-testid="kitchen-connection" className={`rounded-full px-3 py-1 font-bold ${live ? "bg-club-mint text-club-green" : "bg-red-600 text-white"}`}>
             {live ? "Live" : "Reconnecting…"}
           </span>
+          <PrinterChip shopId={staff.shopId} />
           <a href="/admin?tab=history" data-testid="history-link" className="rounded-xl bg-club-paper/10 px-3 py-1.5 font-bold">
             History
           </a>
@@ -429,6 +431,7 @@ function OrderCard({
             ↶
           </button>
         )}
+        <ReprintLabels orderId={o.id} className="rounded-xl border border-club-line px-3 py-3 text-sm font-bold disabled:opacity-40" />
         {label && (
           <button type="button" data-testid="order-action" disabled={busy || blocked} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="flex-1 rounded-xl bg-club-green px-4 py-3 text-lg font-bold text-club-paper disabled:opacity-40">
             {blocked ? "Tick every item to pack" : label}

@@ -38,3 +38,20 @@ test("staff test mode needs an owner login", async ({ request }) => {
 test("the test error alert needs an owner login", async ({ request }) => {
   expect((await request.post("/api/staff/sentry-test")).status()).toBe(401);
 });
+
+test("the label printer address refuses anyone who isn't the printer", async ({ request }) => {
+  // No printer password on this server: closed (503). With one set: wrong sign-in is refused (401).
+  for (const method of ["post", "get", "delete"] as const) {
+    const res = await request[method]("/api/print/cloudprnt", { headers: { Authorization: `Basic ${Buffer.from("the-jacket-club-sr1:wrong-password-wrong").toString("base64")}` } });
+    expect([401, 503], method).toContain(res.status());
+  }
+  expect([401, 503]).toContain((await request.post("/api/print/cloudprnt")).status());
+});
+
+test("the label preview needs a staff login, and the sample label draws", async ({ request }) => {
+  expect((await request.get("/api/staff/label-preview")).status()).toBe(401);
+  const sample = await request.get("/api/print/sample");
+  expect(sample.status()).toBe(200);
+  expect(sample.headers()["content-type"]).toBe("image/png");
+  expect((await sample.body()).subarray(1, 4).toString()).toBe("PNG");
+});

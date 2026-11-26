@@ -1,6 +1,7 @@
 import "server-only";
 import type Stripe from "stripe";
 import { adminClient } from "./admin";
+import { queueOrderLabels } from "./print";
 import { stripe } from "./stripe";
 
 export type FulfilResult =
@@ -37,6 +38,8 @@ export async function fulfilSession(sessionOrId: string | Stripe.Checkout.Sessio
     if (!row) return { ok: false, reason: "error", message: "Order was not created" };
     if (m.staff_test === "1" && row.created) await adminClient().from("orders").update({ is_staff_test: true }).eq("id", row.order_id);
     if (m.account_user_id && row.created) await linkToAccount(row.order_id, m.account_user_id, m.save_address === "1");
+    // After the staff-test mark, so test labels say so. Safe to call twice: the database queues once per order.
+    await queueOrderLabels(row.order_id);
     return { ok: true, orderId: row.order_id, orderNumber: row.order_number, created: row.created };
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : String(e) };
