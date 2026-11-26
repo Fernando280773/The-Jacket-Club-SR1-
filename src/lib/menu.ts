@@ -101,9 +101,18 @@ type GroupRow = {
 const settingsOf = (s: unknown) =>
   (Array.isArray(s) ? s[0] : s) as { delivery_min_order_pence: number; is_accepting_orders: boolean; paused_message: string | null } | undefined;
 
+/**
+ * Browser tests only: treat every item and option as on sale and ordering as not paused,
+ * so a "Sold out" tap in the real kitchen cannot fail the checks and stop a deploy.
+ * Set by the test run (E2E_FULL_MENU=1); never honoured on the live site.
+ */
+export const e2eFullMenu = (env: Record<string, string | undefined> = process.env) =>
+  env.E2E_FULL_MENU === "1" && env.VERCEL_ENV !== "production";
+
 /** Reads the whole menu for the shop from Supabase in four queries. `fresh` skips any cached copy (basket and checkout). */
 export async function getMenu(opts: { fresh?: boolean } = {}): Promise<MenuResult> {
   try {
+    const fullMenu = e2eFullMenu();
     const db = publicClient(opts);
     const { data: shop, error: shopError } = await db
       .from("shops")
@@ -147,7 +156,7 @@ export async function getMenu(opts: { fresh?: boolean } = {}): Promise<MenuResul
             id: o.id,
             name: o.name,
             priceChangePence: o.price_change_pence,
-            isAvailable: o.is_available,
+            isAvailable: fullMenu || o.is_available,
             allergens: toAllergens(o.option_allergens),
           })),
       };
@@ -164,7 +173,7 @@ export async function getMenu(opts: { fresh?: boolean } = {}): Promise<MenuResul
           description: i.description,
           pricePence: i.price_pence,
           isHalal: i.is_halal,
-          isAvailable: i.is_available,
+          isAvailable: fullMenu || i.is_available,
           isFeatured: i.is_featured,
           photoUrl: i.photo_url,
           allergens: toAllergens(i.item_allergens),
@@ -186,7 +195,7 @@ export async function getMenu(opts: { fresh?: boolean } = {}): Promise<MenuResul
         allergens: allergens.data ?? [],
         groups,
         deliveryMinPence: settingsOf(shop.shop_settings)?.delivery_min_order_pence ?? 1200,
-        acceptingOrders: settingsOf(shop.shop_settings)?.is_accepting_orders ?? true,
+        acceptingOrders: fullMenu || (settingsOf(shop.shop_settings)?.is_accepting_orders ?? true),
         pausedMessage: settingsOf(shop.shop_settings)?.paused_message ?? null,
       },
     };

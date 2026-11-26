@@ -20,5 +20,5 @@ export default defineConfig({
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined
-    : { command: `pnpm start --port ${port}`, port, reuseExistingServer: !process.env.CI, timeout: 60_000 },
+    : { command: `pnpm start --port ${port}`, port, reuseExistingServer: !process.env.CI, timeout: 60_000, env: { E2E_FULL_MENU: "1" } },
 });
