@@ -7,7 +7,7 @@ import { allPacked, needsPacking } from "@/lib/history";
 import { notifyOnItsWay } from "@/lib/on-its-way";
 import type { OrderStatus } from "@/lib/order-status";
 import {
-  actionLabel,
+  actionLabel, driverStep,
   ageLevel,
   boardColumns,
   doneLabel,
@@ -353,6 +353,7 @@ function OrderCard({
   const mins = minutesSince(o.created_at, now);
   const level = ageLevel(mins);
   const label = actionLabel(o.type, o.status);
+  const driver = driverStep(o.type, o.status, assigned !== "");
   const back = previousStatus(o.type, o.status);
   const packing = needsPacking(o.type, o.status);
   const [packed, setPacked] = usePacked(o.id);
@@ -434,12 +435,23 @@ function OrderCard({
           </button>
         )}
         <ReprintLabels orderId={o.id} className="rounded-xl border border-club-line px-3 py-3 text-sm font-bold disabled:opacity-40" />
-        {label && (
-          <button type="button" data-testid="order-action" disabled={busy || blocked} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="flex-1 rounded-xl bg-club-green px-4 py-3 text-lg font-bold text-club-paper disabled:opacity-40">
-            {blocked ? "Tick every item to pack" : label}
-          </button>
+        {driver ? (
+          <p data-testid="driver-step" className="flex-1 rounded-xl bg-club-cream px-4 py-3 text-center font-bold">
+            {driver.waiting}
+          </p>
+        ) : (
+          label && (
+            <button type="button" data-testid="order-action" disabled={busy || blocked} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="flex-1 rounded-xl bg-club-green px-4 py-3 text-lg font-bold text-club-paper disabled:opacity-40">
+              {blocked ? "Tick every item to pack" : label}
+            </button>
+          )
         )}
       </div>
+      {driver && assigned !== "" && (
+        <button type="button" data-testid="order-action-backup" disabled={busy} onClick={() => onMove(o, nextStatus(o.type, o.status))} className="self-end text-sm font-bold text-club-muted underline disabled:opacity-40">
+          {driver.backup}
+        </button>
+      )}
     </article>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { actionLabel, ageLevel, boardColumns, columnFor, minutesSince, nextStatus, previousStatus, ukMidnight, whereLabel, type KitchenOrder } from "./kitchen";
+import { actionLabel, ageLevel, driverStep, boardColumns, columnFor, minutesSince, nextStatus, previousStatus, ukMidnight, whereLabel, type KitchenOrder } from "./kitchen";
 
 const order = (n: number, status: KitchenOrder["status"], extra: Partial<KitchenOrder> = {}): KitchenOrder => ({
   id: `o${n}`,
@@ -36,6 +36,14 @@ describe("status moves", () => {
     expect(nextStatus("delivery", "ready")).toBe("out_for_delivery");
     expect(nextStatus("delivery", "out_for_delivery")).toBe("delivered");
     expect(previousStatus("delivery", "collected")).toBeNull();
+  });
+  it("picked up and delivered are the driver's steps; the kitchen only gets a backup", () => {
+    expect(driverStep("delivery", "ready", true)).toEqual({ waiting: "Waiting for the driver to pick up", backup: "Driver can't tap? Send out" });
+    expect(driverStep("delivery", "ready", false)?.waiting).toBe("Choose a driver");
+    expect(driverStep("delivery", "out_for_delivery", true)?.waiting).toBe("With the driver");
+    expect(driverStep("delivery", "preparing", true)).toBeNull();
+    expect(driverStep("collect", "ready", false)).toBeNull();
+    expect(driverStep("table", "ready", false)).toBeNull();
   });
   it("button words fit the order type", () => {
     expect(actionLabel("collect", "received")).toBe("Start preparing");
