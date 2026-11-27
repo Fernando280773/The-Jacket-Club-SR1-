@@ -11,7 +11,7 @@
 
 -- 1. Option groups
 insert into public.option_groups (shop_id, code, name, is_required, min_choices, max_choices, control)
-select s.id, v.code, v.name, v.req, v.min, v.max, v.control
+select s.id, v.code, v.name, v.req, v.min, v.max, v.control::public.option_control
 from (values
   ('G_JMEAL', 'Jacket upgrades', false, 0, 1, 'pick_one'),
   ('G_SAUCEPOT', 'Choose your sauce', true, 1, 1, 'pick_one'),
