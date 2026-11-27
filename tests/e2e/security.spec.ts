@@ -39,6 +39,12 @@ test("the test error alert needs an owner login", async ({ request }) => {
   expect((await request.post("/api/staff/sentry-test")).status()).toBe(401);
 });
 
+test("the on-its-way email cannot be triggered without a staff login", async ({ request }) => {
+  const data = { orderId: "00000000-0000-0000-0000-000000000000" };
+  expect((await request.post("/api/staff/delivery-email", { data })).status()).toBe(401);
+  expect((await request.post("/api/staff/delivery-email", { data, headers: { Authorization: "Bearer forged.token.x" } })).status()).toBe(401);
+});
+
 test("the label printer address refuses anyone who isn't the printer", async ({ request }) => {
   // No printer password on this server: closed (503). With one set: wrong sign-in is refused (401).
   for (const method of ["post", "get", "delete"] as const) {

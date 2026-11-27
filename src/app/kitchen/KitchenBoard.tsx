@@ -4,6 +4,7 @@ import { PrinterChip, ReprintLabels } from "@/components/LabelTools";
 import { milesText } from "@/lib/delivery";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { allPacked, needsPacking } from "@/lib/history";
+import { notifyOnItsWay } from "@/lib/on-its-way";
 import type { OrderStatus } from "@/lib/order-status";
 import {
   actionLabel,
@@ -202,6 +203,7 @@ export function KitchenBoard({ staff, signOut }: { staff: Staff; signOut: ReactN
     // Show the change straight away; the reload below confirms it.
     setOrders((list) => list.map((x) => (x.id === o.id ? { ...x, status: to, updated_at: new Date().toISOString() } : x)));
     const { error } = await staffClient().rpc("set_order_status", { p_order_id: o.id, p_from: o.status, p_to: to });
+    if (!error && to === "out_for_delivery") void notifyOnItsWay(o.id);
     if (error)
       setMessage(
         `Order #${o.number}: ${error.message.startsWith("order is already") ? "already changed on another screen" : error.message.includes("assign a driver") ? "assign a driver first" : "couldn't update. Check the Wi-Fi."}`,

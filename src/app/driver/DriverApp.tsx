@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { StaffGate, type Staff } from "@/components/StaffGate";
 import { milesText, navigateUrl } from "@/lib/delivery";
 import { optionsText, ukMidnight, ukTime } from "@/lib/kitchen";
+import { notifyOnItsWay } from "@/lib/on-its-way";
 import type { OrderStatus } from "@/lib/order-status";
 import { staffClient } from "@/lib/staff-client";
 
@@ -56,6 +57,7 @@ function DriverBoard({ staff, signOut }: { staff: Staff; signOut: ReactNode }) {
   const go = async (o: DriverOrder, to: OrderStatus) => {
     setBusy(o.id);
     const { error } = await staffClient().rpc("driver_set_status", { p_order_id: o.id, p_to: to });
+    if (!error && to === "out_for_delivery") void notifyOnItsWay(o.id);
     setMessage(error ? `Order #${o.number}: ${/order is/.test(error.message) ? "the kitchen hasn't marked it ready yet." : "couldn't update. Try again."}` : to === "delivered" ? `Order #${o.number} delivered. Thanks!` : `Order #${o.number} is out for delivery.`);
     await load();
     setBusy(null);
