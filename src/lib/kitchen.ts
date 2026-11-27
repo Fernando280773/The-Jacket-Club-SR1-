@@ -57,6 +57,17 @@ export function actionLabel(type: OrderType, status: OrderStatus): string | null
   return null;
 }
 
+/**
+ * Delivery steps that belong to the driver's phone (Picked up, Delivered). The kitchen screen shows what it is
+ * waiting for instead of the big button, with a small backup button for when the driver can't use their phone.
+ */
+export function driverStep(type: OrderType, status: OrderStatus, hasDriver: boolean): { waiting: string; backup: string } | null {
+  if (type !== "delivery") return null;
+  if (status === "ready") return { waiting: hasDriver ? "Waiting for the driver to pick up" : "Choose a driver", backup: "Driver can't tap? Send out" };
+  if (status === "out_for_delivery") return { waiting: "With the driver", backup: "Driver can't tap? Mark delivered" };
+  return null;
+}
+
 /** How a finished order is described in "Done today". */
 export function doneLabel(type: OrderType, status: OrderStatus): string {
   if (status === "cancelled") return "Cancelled";
