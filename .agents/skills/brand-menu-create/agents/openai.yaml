@@ -1,0 +1,5 @@
+interface:
+  display_name: "Brand Menu Create"
+  short_description: "Create consistent Jacket Club SR1 menu images and copy"
+  brand_color: "#1F4D2B"
+  default_prompt: "Use $brand-menu-create to create a menu image and short description for my next dish."
