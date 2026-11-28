@@ -1,14 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { expectedMenu } from "./expected-menu";
 
-type MenuJson = {
-  categories: string[];
-  featured: string[];
-  items: { code: string; name: string; price_pence: number; allergens: string[] }[];
-};
-const menu: MenuJson = JSON.parse(readFileSync(path.resolve(__dirname, "../../data/menu.json"), "utf8"));
-const corrections: { corrections: { codes: string[]; add: string[] }[] } = JSON.parse(readFileSync(path.resolve(__dirname, "../../data/allergen-corrections.json"), "utf8"));
+// The snapshot plus every later menu change: see expected-menu.ts.
+const menu = expectedMenu();
 const pounds = (p: number) => `£${(p / 100).toFixed(2)}`;
 
 test("menu shows the shop, opening banner and live open/closed status", async ({ page }) => {
@@ -57,8 +51,7 @@ test("allergen table matches the sheet for every item", async ({ page }) => {
     const ticked = await row.locator("td:has([aria-label^='Contains'])").evaluateAll((tds) =>
       tds.map((td) => td.getAttribute("data-allergen")).sort(),
     );
-    const extra = corrections.corrections.filter((c) => c.codes.includes(item.code)).flatMap((c) => c.add);
-    expect(ticked, item.name).toEqual([...new Set([...item.allergens, ...extra])].sort());
+    expect(ticked, item.name).toEqual(item.allergens);
   }
 });
 

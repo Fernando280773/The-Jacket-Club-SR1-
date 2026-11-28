@@ -1,0 +1,25 @@
+{
+  "note": "Menu changes made by hand-written migrations after the original Menu Sheet snapshot (data/menu.json, which stays unchanged). The browser test applies these on top of the snapshot to know what the live menu should show. Add an entry here in the same pull request as each menu migration.",
+  "changes": [
+    {
+      "migration": "20261127213000_launch_menu_additions.sql",
+      "add": [
+        { "code": "J11", "name": "Butter Jacket", "price_pence": 350, "allergens": ["Milk"] },
+        { "code": "X08", "name": "Regular Sauce Pot (2 oz)", "price_pence": 100, "allergens": [] },
+        { "code": "X09", "name": "Large Sauce Pot (4 oz)", "price_pence": 200, "allergens": [] },
+        { "code": "X10", "name": "Build Your Own Loaded Fries", "price_pence": 495, "allergens": ["Milk"] }
+      ]
+    },
+    {
+      "migration": "20261128210000_breakfast_v2.sql",
+      "remove": ["F01", "F02", "F03", "F04", "F06"],
+      "add": [
+        { "code": "F07", "name": "Turkey Bacon Breakfast Baguette", "price_pence": 420, "allergens": ["Gluten", "Milk", "Sulphites"] },
+        { "code": "F08", "name": "Chicken Sausage Breakfast Baguette", "price_pence": 420, "allergens": ["Gluten", "Milk", "Sulphites"] },
+        { "code": "F09", "name": "Full Breakfast Box", "price_pence": 595, "allergens": ["Eggs", "Gluten", "Milk", "Sulphites"] },
+        { "code": "F10", "name": "Breakfast Loaded Jacket", "price_pence": 650, "allergens": ["Gluten", "Milk", "Sulphites"] }
+      ],
+      "update": [{ "code": "F05", "price_pence": 350, "add_allergens": ["Milk"] }]
+    }
+  ]
+}
