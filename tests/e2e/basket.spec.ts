@@ -14,7 +14,7 @@ test("build The Classic with options, change quantity, refresh, remove", async (
   await expect(sheet.getByTestId("add-to-basket")).toHaveText("Add to basket · £5.50");
 
   await sheet.getByRole("group", { name: "Add a second filling" }).getByLabel("Cheese").check();
-  await sheet.getByRole("group", { name: "Make it a meal" }).getByLabel("Can + fries").check();
+  await sheet.getByRole("group", { name: "Jacket upgrades" }).getByLabel("Add a can and fries").check();
   await expect(sheet.getByTestId("add-to-basket")).toHaveText("Add to basket · £9.30");
   await sheet.getByTestId("add-to-basket").click();
   await expect(sheet).toBeHidden();
@@ -25,7 +25,7 @@ test("build The Classic with options, change quantity, refresh, remove", async (
 
   const line = page.getByTestId("basket-line");
   await expect(line).toHaveCount(1);
-  await expect(line).toContainText("Cheese · Can + fries");
+  await expect(line).toContainText("Cheese · Add a can and fries");
   await expect(line.getByTestId("line-total")).toHaveText("£9.30");
   await expect(page.getByTestId("basket-subtotal")).toHaveText("£9.30");
 
